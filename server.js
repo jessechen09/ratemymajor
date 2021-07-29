@@ -1,7 +1,7 @@
 /*
-Author: Jesse Chen
+Author: Jesse Chen, Kat McGee
 Course: CSC 377
-Assignment: PA9
+Assignment: Final project
 File: Starts server.
 */
 
@@ -26,15 +26,110 @@ const mongoDBurl = 'mongodb://localhost/auto';
 
 var Schema = mongoose.Schema;
 
-var ItemSchema = new Schema({
-	title: String,
-	description: String,
-	image: String,
-	price: Number,
-	stat: String
-});
+// Majors
 
-var Item = mongoose.model('Item', ItemSchema);
+var MajorSchema = new Schema({
+	major: String,
+	reviews: [{type: Schema.Types.ObjectId, ref: 'Review'}]
+})
+
+var Major = mongoose.model('Major', MajorSchema)
+
+var cs = new Major({
+	major: "Computer Science",
+	reviews: []
+})
+cs.save((err)=>{if(err)console.log('error saving cs')});
+
+var bw = new Major({
+	major: "Basket Weaving",
+	reviews: []
+})
+bw.save((err)=>{if(err)console.log('error saving bw')});
+
+// University
+
+var UniversitySchema = new Schema({
+	university: String,
+	reviews: [{type: Schema.Types.ObjectId, ref: 'University'}]
+})
+
+var University = mongoose.model('Major', UniversitySchema)
+
+var uArizona = new University({
+	university: 'University of Arizona',
+	reviews: [] 
+})
+uArizona.save((err)=>{if(err)console.log('error saving uArizona')});
+
+var arizonaState = new University({
+	university: 'Arizona State University',
+	reviews: [] 
+})
+arizonaState.save((err)=>{if(err)console.log('error saving arizonaState')});
+
+var uIllinois = new University({
+	university: 'University of Illinois',
+	reviews: [] 
+})
+uIllinois.save((err)=>{if(err)console.log('error saving uIllinois')});
+
+// Comments
+
+var CommentSchema = new Schema({
+	commentBody: String,
+	thumbsUp: number,
+	thumbsDown: number,
+	comments: [{type: Schema.Types.ObjectId, ref: 'Comment'}] // comments can have comments 
+})
+
+var Comment = mongoose.model('Comment', CommentSchema);
+
+var cmt1 = new Comment({
+	commentBody: "I agree! This major is great!",
+	thumbsUp: 10,
+	thumbsDown: 3,
+})
+cmt1.save((err)=>{if(err)console.log('error saving cmt1')});
+
+var cmt2 = new Comment({
+	commentBody: "What?! I thought this major sucked!",
+	thumbsUp: 3,
+	thumbsDown: 27,
+})
+cmt2.save((err)=>{if(err)console.log('error saving cmt2')});
+
+// Reviews
+
+var ReviewSchema = new Schema({
+	reviewBody: String,
+	images: [String],
+	thumbsUp: number,
+	thumbsDown: number,
+	comments: [{type: Schema.Types.ObjectId, ref: 'Comment'}]
+})
+
+var Review = mongoose.model('Review', ReviewSchema);
+
+var r1 = new Comment({
+	reviewBody: "I love programming so CS is the best major for me. I don't like that math parts as much, though they are manageable.",
+	images: [],
+	thumbsUp: 199,
+	thumbsDown: 3,
+	comments: [cmt1]
+})
+r1.save((err)=>{if(err)console.log('error saving r1')});
+
+var r2 = new Comment({
+	reviewBody: "I don't think there are many jobs related to basekt weaving.",
+	images: [],
+	thumbsUp: 33,
+	thumbsDown: 7,
+	comments: [cmt1]
+})
+r2.save((err)=>{if(err)console.log('error saving r2')});
+
+// Users
 
 var UserSchema = new Schema({
 	username: String,
@@ -45,46 +140,8 @@ var UserSchema = new Schema({
 
 var User = mongoose.model('User', UserSchema);
 
-// add items
-var mouse = new Item({
-	title:'Mouse', 
-	description:'Gaming mouse',
-	image: 'gaming_mouse.jpeg',
-	price: 39,
-	stat: 'SALE'
-}); 
-mouse.save((err)=>{if (err) console.log('error')});
-
-var keyboard = new Item({
-	title:'Keyboard', 
-	description:'Full sized keyboard',
-	image: 'keyboard.jpeg',
-	price: 19,
-	stat: 'SALE'
-}); 
-keyboard.save((err)=>{if (err) console.log('error')});
-
-var headphones = new Item({
-	title:'Headphones', 
-	description:'Over the head headphones',
-	image: 'headphones.jpeg',
-	price: 199,
-	stat: 'SALE'
-}); 
-headphones.save((err)=>{if (err) console.log('error')});
-
-var laptop = new Item({
-	title:'Laptop', 
-	description:'Entry-level laptop',
-	image: 'laptop.jpeg',
-	price: 199,
-	stat: 'SALE'
-}); 
-laptop.save((err)=>{if (err) console.log('error')});
-
-// add users
 var jesse = new User({
-	username: 'asdf',
+	username: 'jc',
 	password: 'asdf',
 	listings: [],
 	purchases: []
@@ -99,7 +156,17 @@ var jon = new User({
 }); 
 jon.save((err)=>{if (err) console.log('error: jon')});
 
-// ======================================================================
+// Final project ============================================================
+
+app.post('/add/review/:major/:university/:review',(req,res)=>{
+
+})
+
+app.post('/add/comment/:comment',(req,res)=>{
+	
+})
+
+// PA10 =====================================================================
 var sessionKeys = {};
 var sessionMins = 20;
 setInterval(()=>{
