@@ -1,0 +1,37 @@
+<!-- Author: Kat McGee
+    Filename: home.html
+    This html file creates the home page for RateMyMajor.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <script src="jquery.js"></script>
+  <script src="code.js"></script>
+  <title>Rate My Major</title>
+</head>
+<body>
+
+  <span id="navBar">
+    <a id="logoButton" href="home.html">Logo Image</a>
+    <a id="homeButton" href="home.html">Home</a>
+    <a id="searchUniButton" href="./uni.html">Search By University</a>
+    <a id="searchMajButton" href="./major.html">Search By Major</a>
+    <a id="accountButton" href="./account.html">Account</a>
+  </span>
+
+  <div id="welcome"><h2>Welcome to Rate My Major</h2></div>
+  
+  <div id="about"></div>
+
+  <div id="university">
+    <input type="button" id="searchUniversity" onclick="searchUni();" value="Search By University"/>
+  </div>
+  <div id="major">
+    <input type="button" id="searchMajor" onclick="searchMaj();" value="Search By Major"/>
+  </div>
+
+  <div id="help"><a id="helpButton" href="/help.html">Help</a></div>
+
+</body>
+</html>

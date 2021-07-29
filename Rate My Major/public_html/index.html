@@ -1,0 +1,51 @@
+<!-- Author: Kat McGee
+    Filename: index.html
+    This html file creates the login page for RateMyMajor.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <script src="jquery.js"></script>
+  <script src="code.js"></script>
+  <title>Rate My Major</title>
+</head>
+<body>
+
+  <span id="navBar">
+    <a id="logoButton" href="home.html">Logo Image</a>
+    <a id="homeButton" href="home.html">Home</a>
+    <a id="accountButton" href="account.html">Account</a>
+  </span>
+
+  <div id="welcome"><h2>Welcome to Rate My Major</h2></div>
+  
+  <div id="login">
+    <h2>Login</h2>
+    <label for="luser">Username</label>
+    <input id="luser" type="text"></input>
+    <br/><br/>
+    <label for="lpassword">Password</label>
+    <input id="lpassword" type="password"> </input>
+    <br/><br/>
+    <input type="button" id="login" onclick="login();" value="Login"/>
+    <br/><br/><br/><br/>
+    <div id="error"></div>
+  </div>
+
+  <div id="create">
+    <h2>Create Account</h2>
+    <label for="user">Username</label>
+    <input id="user" type="text"></input>
+    <br/><br/>
+    <label for="password">Password</label>
+    <input id="password" type="password"> </input>
+    <br/><br/>
+    <input type="button" id="addUser" onclick="addUser();" value="Add User"/>
+    <br/><br/><br/><br/>
+  </div>
+
+  <div id="help"><a id="helpButton" href="/help.html">Help</a></div>
+
+</body>
+</html>
