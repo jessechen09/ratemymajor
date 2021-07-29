@@ -111,7 +111,7 @@ var ReviewSchema = new Schema({
 
 var Review = mongoose.model('Review', ReviewSchema);
 
-var r1 = new Comment({
+var r1 = new Review({
 	reviewBody: "I love programming so CS is the best major for me. I don't like that math parts as much, though they are manageable.",
 	images: [],
 	thumbsUp: 199,
@@ -120,7 +120,7 @@ var r1 = new Comment({
 })
 r1.save((err)=>{if(err)console.log('error saving r1')});
 
-var r2 = new Comment({
+var r2 = new Review({
 	reviewBody: "I don't think there are many jobs related to basekt weaving.",
 	images: [],
 	thumbsUp: 33,
@@ -162,11 +162,37 @@ app.post('/add/review/:major/:university/:review',(req,res)=>{
 
 })
 
-app.post('/add/comment/:comment',(req,res)=>{
+app.post('/add/comment/:review/:comment',(req,res)=>{
 	
 })
 
-// PA10 =====================================================================
+app.get('/delete/review/:review',(req,res)=>{
+
+})
+
+app.get('/delete/comment/:comment',(req,res)=>{
+
+})
+
+app.get('/thumbsup/review/:review',(req,res)=>{
+
+})
+
+app.get('/thumbsdown/review/:review',(req,res)=>{
+
+})
+
+app.get('/thumbsup/comment/:comment',(req,res)=>{
+
+})
+
+app.get('/thumbsdown/comment/:comment',(req,res)=>{
+
+})
+
+
+
+// PA10 reuse ========================================================================
 var sessionKeys = {};
 var sessionMins = 20;
 setInterval(()=>{
@@ -221,6 +247,33 @@ app.get('/login/:username/:password',(req,res)=>{
 	})
 })
 
+// create account
+app.post('/add/user/:username/:password', (req,res)=>{
+	let user = req.params.username;
+	let pw = req.params.password;
+
+	User.find({username: user}).exec((error,results)=>{
+		if (results.length == 1){
+			console.log("user exists: "+results[0].username);
+			res.send('error');
+		} else {
+			var newUser = new User({
+				username: user,
+				password: pw,
+				lists: [],
+				purchases: []
+			})
+			newUser.save((err)=>{if (err) console.log('error adding new user')});
+			console.log("User added")
+			console.log("Username: "+user)
+			console.log("Password: "+pw)
+			res.send("");
+		}
+	})
+})
+
+
+// PA10 - do not reuse ==============================================================================
 // search listings
 app.get('/search/listings/:keyword', (req,res)=>{
 	let keyword = req.params.keyword;
@@ -357,30 +410,6 @@ app.post('/add/item/:title/:desc/:img/:price/:stat', (req,res)=>{
 	res.send("");
 })
 
-// create account
-app.post('/add/user/:username/:password', (req,res)=>{
-	let user = req.params.username;
-	let pw = req.params.password;
-
-	User.find({username: user}).exec((error,results)=>{
-		if (results.length == 1){
-			console.log("user exists: "+results[0].username);
-			res.send('error');
-		} else {
-			var newUser = new User({
-				username: user,
-				password: pw,
-				lists: [],
-				purchases: []
-			})
-			newUser.save((err)=>{if (err) console.log('error adding new user')});
-			console.log("User added")
-			console.log("Username: "+user)
-			console.log("Password: "+pw)
-			res.send("");
-		}
-	})
-})
 
 // PA9 ==================================================================
 // app.get('/get/users', (req,res)=>{
