@@ -41,35 +41,91 @@ function addUser(){
 }
 
 function addReview(){
+	$.ajax({
+		url: ,
+		data: {},
+		method: 'POST',
+		success: (result)=>{
 
+		}
+	})
 }
 
 function addComment(){
-
+	$.ajax({
+		url: ,
+		data: {},
+		method: 'POST',
+		success: (result)=>{
+			
+		}
+	})
 }
 
 function deleteReview(){
-
+	$.ajax({
+		url: ,
+		data: {},
+		method: 'GET',
+		success: (result)=>{
+			
+		}
+	})
 }
 
 function deleteComment(){
-
+	$.ajax({
+		url: ,
+		data: {},
+		method: 'GET',
+		success: (result)=>{
+			
+		}
+	})
 }
 
 function thumbsUpReview(){
-
+	$.ajax({
+		url: ,
+		data: {},
+		method: 'GET',
+		success: (result)=>{
+			
+		}
+	})
 }
 
 function thumbsDownReview(){
-
+	$.ajax({
+		url: ,
+		data: {},
+		method: 'GET',
+		success: (result)=>{
+			
+		}
+	})
 }
 
 function thumbsUpComment(){
-
+	$.ajax({
+		url: ,
+		data: {},
+		method: 'GET',
+		success: (result)=>{
+			
+		}
+	})
 }
 
 function thumbsDownComment(){
-
+	$.ajax({
+		url: ,
+		data: {},
+		method: 'GET',
+		success: (result)=>{
+			
+		}
+	})
 }
 
 
