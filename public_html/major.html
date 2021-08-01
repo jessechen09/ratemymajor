@@ -1,5 +1,5 @@
-<!-- Author: Kat McGee
-    Filename: home.html
+<!-- Author: Jesse Chen and Kat McGee
+    Filename: major.html
     This html file creates the home page for RateMyMajor.
 -->
 <!DOCTYPE html>
@@ -12,21 +12,24 @@
 </head>
 <body>
 
-  <span id="navBar">
+  <div id="navBar">
     <a class="navButton" id="logoButton" href="home.html">Logo Image</a>
     <a class="navButton" id="homeButton" href="home.html">Home</a>
     <a class="navButton" id="searchMajButton" href="./major.html">Search By Major</a>
     <a class="navButton" id="accountButton" href="./account.html">Account</a>
-  </span>
+  </div>
 
   <div id="major">
-    <input type="button" id="searchMajor" onclick="searchMaj();" value="Search By Major"/>
+    <label for="searchMajor">Search By Major Keyword</label>
+    <input id="searchMajor" type="text">
+    <input type="button" id="search" onclick="searchMaj();" value="Search"/>
   </div>
 
   <div id="filter">
     <input type="button" id="filterBy" onclick="filterBy();" value="Change Filters"/>
   </div>
 
+  <div id="reviewSection"></div>
 
   <div id="help"><a id="helpButton" href="/help.html">Help</a></div>
 
