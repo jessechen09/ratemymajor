@@ -76,22 +76,28 @@ uIllinois.save((err)=>{if(err)console.log('error saving uIllinois')});
 
 // Comments
 var CommentSchema = new Schema({
-	commentBody: String,
+	author: String,
+	comment: String,
 	thumbsUp: Number,
 	thumbsDown: Number,
 })
 
 var Comment = mongoose.model('Comment', CommentSchema);
 
+let user1 = 'asdf';
+let user2 = 'jonsmyth';
+
 var cmt1 = new Comment({
-	commentBody: "I agree! This major is great!",
+	author: user1,
+	comment: "I agree! This major is great!",
 	thumbsUp: 10,
 	thumbsDown: 3,
 })
 cmt1.save((err)=>{if(err)console.log('error saving cmt1')});
 
 var cmt2 = new Comment({
-	commentBody: "What?! I thought this major sucked!",
+	author: user2,
+	comment: "What?! I thought this major sucked!",
 	thumbsUp: 3,
 	thumbsDown: 27,
 })
@@ -99,7 +105,8 @@ cmt2.save((err)=>{if(err)console.log('error saving cmt2')});
 
 // Reviews
 var ReviewSchema = new Schema({
-	reviewBody: String,
+	author: String,
+	review: String,
 	images: [String],
 	thumbsUp: Number,
 	thumbsDown: Number,
@@ -109,7 +116,8 @@ var ReviewSchema = new Schema({
 var Review = mongoose.model('Review', ReviewSchema);
 
 var r1 = new Review({
-	reviewBody: "review one",
+	author: user2,
+	review: "review one",
 	images: [],
 	thumbsUp: 199,
 	thumbsDown: 3,
@@ -119,7 +127,8 @@ r1.save((err)=>{if(err)console.log('error saving r1')});
 cs.reviews.push(r1);
 
 var r2 = new Review({
-	reviewBody: "I don't think there are many jobs related to basekt weaving.",
+	author: user2,
+	review: "I don't think there are many jobs related to basekt weaving.",
 	images: [],
 	thumbsUp: 33,
 	thumbsDown: 7,
@@ -132,29 +141,31 @@ bw.reviews.push(r2);
 var UserSchema = new Schema({
 	username: String,
 	password: String,
-	reviews: [{type: Schema.Types.ObjectId, ref: 'Review'}],
-	comments: [{type: Schema.Types.ObjectId, ref: 'Comment'}]
+	// reviews: [{type: Schema.Types.ObjectId, ref: 'Review'}],
+	// comments: [{type: Schema.Types.ObjectId, ref: 'Comment'}]
 })
 
 var User = mongoose.model('User', UserSchema);
 
 var jesse = new User({
-	username: 'asdf',
-	password: 'asdf',
-	reviews: [],
-	comments: []
+	username: user1,
+	password: user1,
+	// reviews: [],
+	// comments: []
 }); 
 jesse.save((err)=>{if (err) console.log('error: jesse')});
 jesse.reviews.push(cs);
 
 var jon = new User({
-	username: 'jonsmyth',
-	password: 'badpassword',
-	reviews: [],
-	comments: []
+	username: user2,
+	password: user2,
+	// reviews: [],
+	// comments: []
 }); 
 jon.save((err)=>{if (err) console.log('error: jon')});
+jon.reviews.push(bw);
 
+// ================================================================================
 var sessionKeys = {};
 var sessionMins = 20;
 setInterval(()=>{
@@ -191,6 +202,7 @@ mongoose.connect(mongoDBurl, {useNewUrlParser: true});
 db.dropDatabase();
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
+// ================================================================================
 // add review - should be POST
 app.post('/add/review/:major/:university/:review/:image',(req,res)=>{
 	let user = 'asdf';//req.cookies.login.username;
@@ -202,7 +214,8 @@ app.post('/add/review/:major/:university/:review/:image',(req,res)=>{
 	// if user's major/uni DNE, they can add, which will be done before here
 
 	var review = new Review({
-		reviewBody: req.params.review,
+		author: user,
+		review: req.params.review,
 		images: req.params.image,
 		thumbsUp: 0,
 		thumbsDown: 0,
@@ -213,10 +226,10 @@ app.post('/add/review/:major/:university/:review/:image',(req,res)=>{
 	console.log(review);
 
 	// add review to User collection
-	User.find({username: user}).exec((error,results)=>{
-		console.log("User: " + user);
-		results[0].reviews.push(review);
-	})
+	// User.find({username: user}).exec((error,results)=>{
+	// 	console.log("User: " + user);
+	// 	results[0].reviews.push(review);
+	// })
 
 	// add review to Major collection
 	Major.find({major: maj}).exec((error,results)=>{
@@ -235,7 +248,7 @@ app.post('/add/review/:major/:university/:review/:image',(req,res)=>{
 
 // add comment - should be POST
 app.post('/add/comment/:review/:comment',(req,res)=>{
-	let user = 'asdf';//req.cookies.login.username;
+	let user =req.cookies.login.username;
 	let rev = req.params.review;
 
 	// removed check if major/uni exists, because should always exist
@@ -243,7 +256,8 @@ app.post('/add/comment/:review/:comment',(req,res)=>{
 	// if user's major/uni DNE, they can add, which will be done before here
 
 	var comment = new Comment({
-		commentBody: req.params.comment,
+		author: user,
+		comment: req.params.comment,
 		thumbsUp: 0,
 		thumbsDown: 0,
 	})
@@ -258,7 +272,7 @@ app.post('/add/comment/:review/:comment',(req,res)=>{
 	})
 
 	// add comment to Review collection
-	Review.find({reviewBody: rev}).exec((error,results)=>{
+	Review.find({review: rev}).exec((error,results)=>{
 		console.log("Review: " + rev);
 		results[0].comments.push(comment);
 	})
@@ -267,11 +281,13 @@ app.post('/add/comment/:review/:comment',(req,res)=>{
 })
 
 app.get('/delete/review/:review',(req,res)=>{
-	
+	Review.deleteOne({review: req.params.review}).exec((error,results)=>{});
+	console.log("Review deleted");
 })
 
 app.get('/delete/comment/:comment',(req,res)=>{
-
+	Comment.deleteOne({review: req.params.review}).exec((error,results)=>{});
+	console.log("Comment deleted");
 })
 
 app.get('/thumbsup/review/:review',(req,res)=>{
