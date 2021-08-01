@@ -10,7 +10,9 @@ File: Starts server.
 const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser')
+const crypto = require('crypto')
 const app = express();
+const iterations = 1000;
 app.use(cookieParser());
 // for local testing only
 // DigOcean version uses port=80 and appropriate hostname
@@ -141,29 +143,30 @@ bw.reviews.push(r2);
 var UserSchema = new Schema({
 	username: String,
 	password: String,
+	salt: String,
+	hash: String
 	// reviews: [{type: Schema.Types.ObjectId, ref: 'Review'}],
 	// comments: [{type: Schema.Types.ObjectId, ref: 'Comment'}]
 })
 
 var User = mongoose.model('User', UserSchema);
 
-var jesse = new User({
-	username: user1,
-	password: user1,
-	// reviews: [],
-	// comments: []
-}); 
-jesse.save((err)=>{if (err) console.log('error: jesse')});
-// jesse.reviews.push(cs);
+var salt = crypto.randomBytes(65).toString('base64');
 
-var jon = new User({
-	username: user2,
-	password: user2,
-	// reviews: [],
-	// comments: []
-}); 
-jon.save((err)=>{if (err) console.log('error: jon')});
-// jon.reviews.push(bw);
+let pw1 = user1;
+crypto.pbkdf2(pw1, salt, iterations, 64, 'sha512', (err,hash)=>{
+	if(err) throw err;
+	var jesse = new User({
+		username: user1,
+		password: pw1,
+		salt: salt,
+		hash: hash.toString('base64')
+	})
+	jesse.save((err)=>{if (err) console.log('error adding new user')});
+	console.log("User added")
+	console.log("Username: "+user1)
+	console.log("Password: "+pw1)
+})
 
 // ================================================================================
 var sessionKeys = {};
@@ -193,7 +196,6 @@ app.use('/post.html',(req,res,next)=>{
 		next();
 	}
 });
-
 
 app.use(express.static('public_html'));
 // app.use(bodyParser.urlencoded({ extended: true }));
@@ -341,15 +343,27 @@ app.get('/login/:username/:password',(req,res)=>{
 	let pw = req.params.password;
 	console.log("User: " + user)
 	console.log("Pw: " + pw)
-	User.find({username: user, password: pw}).exec((error,results)=>{
+	User.find({username: user}).exec((error,results)=>{
 		if (results.length == 1){
-			console.log("logged in!");
-			let sessionKey = Math.floor(Math.random()*1000);
-			sessionKeys[user] = [sessionKey, Date.now()];
-			res.cookie("login", {username: user, key: sessionKey}, {maxAge: sessionMins*60000});
-			res.send('pass');
+			var salt = results[0].salt;
+			console.log(salt);
+			crypto.pbkdf2(pw, salt, iterations, 64, 'sha512', (err,hash)=>{
+				if (err) throw err;
+				let hStr = hash.toString('base64');
+				if(results[0].hash == hStr) {
+					console.log("logged in!");
+					let sessionKey = Math.floor(Math.random()*1000);
+					sessionKeys[user] = [sessionKey, Date.now()];
+					res.cookie("login", {username: user, key: sessionKey}, {maxAge: sessionMins*60000});
+					res.send('pass');
+				} else {
+					console.log("hash check failed, so login failed!")
+					res.send("hash check failed");
+				}
+			})
+			
 		} else {
-			console.log("log in failed!");
+			console.log("user not found, so log in failed!");
 			res.send('Incorrect username or password. Please try again.');
 		}
 	})
@@ -365,17 +379,23 @@ app.post('/add/user/:username/:password', (req,res)=>{
 			console.log("user exists: "+results[0].username);
 			res.send('error');
 		} else {
-			var newUser = new User({
-				username: user,
-				password: pw,
-				lists: [],
-				purchases: []
+			var salt = crypto.randomBytes(65).toString('base64');
+
+			crypto.pbkdf2(pw, salt, iterations, 64, 'sha512', (err,hash)=>{
+				if(err) throw err;
+				let hashStr = hash.toString('base64');
+				var newUser = new User({
+					username: user,
+					password: pw,
+					salt: salt,
+					hash: hashString
+				})
+				newUser.save((err)=>{if (err) console.log('error adding new user')});
+				console.log("User added")
+				console.log("Username: "+user)
+				console.log("Password: "+pw)
+				res.send("");
 			})
-			newUser.save((err)=>{if (err) console.log('error adding new user')});
-			console.log("User added")
-			console.log("Username: "+user)
-			console.log("Password: "+pw)
-			res.send("");
 		}
 	})
 })
