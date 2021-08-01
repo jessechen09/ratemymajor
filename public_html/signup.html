@@ -1,0 +1,37 @@
+<!-- Author: Kat McGee
+    Filename: index.html
+    This html file creates the login page for RateMyMajor.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <script src="jquery.js"></script>
+  <script src="functions.js"></script>
+  <title>Rate My Major</title>
+</head>
+<body>
+
+  <div id="welcome">
+      <h2 class="welcomeText" id="welcomeText">Welcome to Rate My Major</h2>
+      <p class="welcomeText">Please sign-in with your email and password</p> 
+  </div>
+
+  <div id="create">
+    <h2 id="createTextTop">Create Account</h2>
+    <label for="user">Username</label>
+    <input id="user" type="text"></input>
+    <br/><br/>
+    <label for="password">Password</label>
+    <input id="password" type="password"> </input>
+    <br/><br/>
+    <input type="button" id="addUser" onclick="addUser();" value="Add User"/>
+    <br/><br/><br/><br/>
+    <div id="signIn">Already have an account?<br/><br/><a id="signInButton" href="index.html">Sign in here</a></div>
+
+  </div>
+
+  <div id="help"><a id="helpButton" href="/help.html">Help</a></div>
+
+</body>
+</html>
