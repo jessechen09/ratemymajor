@@ -15,14 +15,14 @@ app.use(cookieParser());
 // for local testing only
 // DigOcean version uses port=80 and appropriate hostname
 const port = 3000; 
-const hostname = '192.241.132.24';
+// const hostname = '192.241.132.24';
 
 // const serveIndex = require('serve-index');
 // const bodyParser = require('body-parser');
 
 // mongoDB ==============================================================
 const db = mongoose.connection;
-const mongoDBurl = 'mongodb://localhost/auto';
+const mongoDBurl = 'mongodb://localhost/ratemymajor';
 
 var Schema = mongoose.Schema;
 
@@ -51,10 +51,10 @@ bw.save((err)=>{if(err)console.log('error saving bw')});
 
 var UniversitySchema = new Schema({
 	university: String,
-	reviews: [{type: Schema.Types.ObjectId, ref: 'University'}]
+	reviews: [{type: Schema.Types.ObjectId, ref: 'Review'}]
 })
 
-var University = mongoose.model('Major', UniversitySchema)
+var University = mongoose.model('University', UniversitySchema)
 
 var uArizona = new University({
 	university: 'University of Arizona',
@@ -78,8 +78,8 @@ uIllinois.save((err)=>{if(err)console.log('error saving uIllinois')});
 
 var CommentSchema = new Schema({
 	commentBody: String,
-	thumbsUp: number,
-	thumbsDown: number,
+	thumbsUp: Number,
+	thumbsDown: Number,
 	comments: [{type: Schema.Types.ObjectId, ref: 'Comment'}] // comments can have comments 
 })
 
@@ -104,8 +104,8 @@ cmt2.save((err)=>{if(err)console.log('error saving cmt2')});
 var ReviewSchema = new Schema({
 	reviewBody: String,
 	images: [String],
-	thumbsUp: number,
-	thumbsDown: number,
+	thumbsUp: Number,
+	thumbsDown: Number,
 	comments: [{type: Schema.Types.ObjectId, ref: 'Comment'}]
 })
 
@@ -119,6 +119,7 @@ var r1 = new Review({
 	comments: [cmt1]
 })
 r1.save((err)=>{if(err)console.log('error saving r1')});
+cs.reviews.push(r1);
 
 var r2 = new Review({
 	reviewBody: "I don't think there are many jobs related to basekt weaving.",
@@ -128,42 +129,87 @@ var r2 = new Review({
 	comments: [cmt1]
 })
 r2.save((err)=>{if(err)console.log('error saving r2')});
+bw.reviews.push(r2);
 
 // Users
 
 var UserSchema = new Schema({
 	username: String,
 	password: String,
-	listings: [{type: Schema.Types.ObjectId, ref: 'Item'}],
-	purchases: [{type: Schema.Types.ObjectId, ref: 'Item'}]
+	reviews: [{type: Schema.Types.ObjectId, ref: 'Review'}],
+	comments: [{type: Schema.Types.ObjectId, ref: 'Comment'}]
 })
 
 var User = mongoose.model('User', UserSchema);
 
 var jesse = new User({
-	username: 'jc',
+	username: 'asdf',
 	password: 'asdf',
-	listings: [],
-	purchases: []
+	reviews: [],
+	comments: []
 }); 
 jesse.save((err)=>{if (err) console.log('error: jesse')});
 
 var jon = new User({
 	username: 'jonsmyth',
 	password: 'badpassword',
-	listings: [],
-	purchases: []
+	reviews: [],
+	comments: []
 }); 
 jon.save((err)=>{if (err) console.log('error: jon')});
 
 // Final project ============================================================
 
-app.post('/add/review/:major/:university/:review',(req,res)=>{
+app.post('/add/review/:major/:university/:review/:image',(req,res)=>{
+	let user = req.cookies.login.username;
+	let maj = req.params.major;
+	let uni = req.params.university;
+	// untested, but should check if major is in collection
+	// run if not in collection:
+	if (!Major.find({major: maj})){
+		// create new major
+		console.log("Major not found, creating new one.")
+	}
 
+	if (!University.find({university: uni})){
+		// create new university
+		console.log("University not found, creating new one.")
+	}
+
+	var review = new Review({
+		reviewBody: req.params.review,
+		images: req.params.image,
+		thumbsUp: 0,
+		thumbsDown: 0,
+		comments: []
+	})
+
+	review.save((err)=>{if(err)console.log('error saving review')})
+	console.log(review);
+
+	// add review to User collection
+	User.find({username: user}).exec((error,results)=>{
+		console.log("User: " + user)
+		results[0].reviews.push(review);
+	})
+
+	// add review to Major collection
+	Major.find({major:maj}).exec((error,results)=>{
+		console.log("Major: " + maj);
+		results[0].reviews.push(review);
+	})
+
+	// add review to University collection
+	University.find({university:uni}).exec((error,results)=>{
+		console.log("University: " + uni);
+		results[0].reviews.push(review);
+	})
+
+	res.send("");
 })
 
 app.post('/add/comment/:review/:comment',(req,res)=>{
-	
+	let user = req.cookies.login.username;
 })
 
 app.get('/delete/review/:review',(req,res)=>{
