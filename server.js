@@ -154,7 +154,7 @@ var jesse = new User({
 	// comments: []
 }); 
 jesse.save((err)=>{if (err) console.log('error: jesse')});
-jesse.reviews.push(cs);
+// jesse.reviews.push(cs);
 
 var jon = new User({
 	username: user2,
@@ -163,7 +163,7 @@ var jon = new User({
 	// comments: []
 }); 
 jon.save((err)=>{if (err) console.log('error: jon')});
-jon.reviews.push(bw);
+// jon.reviews.push(bw);
 
 // ================================================================================
 var sessionKeys = {};
@@ -202,8 +202,9 @@ mongoose.connect(mongoDBurl, {useNewUrlParser: true});
 db.dropDatabase();
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-// ================================================================================
-// add review - should be POST
+// adding ================================================================================
+
+// add review - should be POST - GET for testing only
 app.post('/add/review/:major/:university/:review/:image',(req,res)=>{
 	let user = 'asdf';//req.cookies.login.username;
 	let maj = req.params.major;
@@ -243,12 +244,13 @@ app.post('/add/review/:major/:university/:review/:image',(req,res)=>{
 		results[0].reviews.push(review);
 	})
 
+	console.log("Review added");
 	res.send("");
 })
 
-// add comment - should be POST
+// add comment - should be POST - GET for testing only
 app.post('/add/comment/:review/:comment',(req,res)=>{
-	let user =req.cookies.login.username;
+	let user = req.cookies.login.username;
 	let rev = req.params.review;
 
 	// removed check if major/uni exists, because should always exist
@@ -266,10 +268,10 @@ app.post('/add/comment/:review/:comment',(req,res)=>{
 	console.log(comment);
 
 	// add comment to User collection
-	User.find({username: user}).exec((error,results)=>{
-		console.log("User: " + user)
-		results[0].comments.push(comment);
-	})
+	// User.find({username: user}).exec((error,results)=>{
+	// 	console.log("User: " + user)
+	// 	results[0].comments.push(comment);
+	// })
 
 	// add comment to Review collection
 	Review.find({review: rev}).exec((error,results)=>{
@@ -277,35 +279,61 @@ app.post('/add/comment/:review/:comment',(req,res)=>{
 		results[0].comments.push(comment);
 	})
 
+	console.log("Comment added");
 	res.send("");
 })
+
+// deleting =================================================================================
 
 app.get('/delete/review/:review',(req,res)=>{
 	Review.deleteOne({review: req.params.review}).exec((error,results)=>{});
 	console.log("Review deleted");
+	res.send("");
 })
 
 app.get('/delete/comment/:comment',(req,res)=>{
-	Comment.deleteOne({review: req.params.review}).exec((error,results)=>{});
+	Comment.deleteOne({comment: req.params.comment}).exec((error,results)=>{});
 	console.log("Comment deleted");
+	res.send("");
 })
 
-app.get('/thumbsup/review/:review',(req,res)=>{
+// thumbing =====================================================================================
 
+app.get('/thumbsup/review/:review',(req,res)=>{
+	Review.find({review: req.params.review}).exec((error,results)=>{
+		results[0].thumbsUp +=1;
+		results[0].save((err)=>{if(err)console.log("error thumbing up review")});
+		console.log("Review thumbs upped: " + results[0].thumbsUp);
+	})
+	res.send("");
 })
 
 app.get('/thumbsdown/review/:review',(req,res)=>{
-
+	Review.find({review: req.params.review}).exec((error,results)=>{
+		results[0].thumbsDown +=1;
+		results[0].save((err)=>{if(err)console.log("error thumbing down review")});
+		console.log("Review thumbs downed: " + results[0].thumbsDown);
+	})
+	res.send("");
 })
 
 app.get('/thumbsup/comment/:comment',(req,res)=>{
-
+	Comment.find({comment: req.params.comment}).exec((error,results)=>{
+		results[0].thumbsUp +=1;
+		results[0].save((err)=>{if(err)console.log("error thumbing up comment")});	
+		console.log("Comment thumbs upped: " + results[0].thumbsUp);	
+	})
+	res.send("");
 })
 
 app.get('/thumbsdown/comment/:comment',(req,res)=>{
-
+	Comment.find({comment: req.params.comment}).exec((error,results)=>{
+		results[0].thumbsDown +=1;
+		results[0].save((err)=>{if(err)console.log("error thumbing down comment")});
+		console.log("Comment thumbs downed: " + results[0].thumbsDown);	
+	})
+	res.send("");
 })
-
 
 // login
 app.get('/login/:username/:password',(req,res)=>{
