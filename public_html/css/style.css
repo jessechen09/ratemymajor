@@ -1,17 +1,42 @@
-#navbar {
+#navBar {
     position: absolute;
     width: 100%;
     height: 8%;
+    left:0px;
+    top:0px;
     margin-left: auto;
     margin-right: auto;
     background-color: rgb(80, 100, 250);
 }
 
 .navButton {
-    background-color: white;
-    color: black;
-    padding: 7px;
+    color: rgb(14, 3, 44);
+    padding: 4%;
     margin-right: 10px;
+}
+
+#logoButton {
+    position: absolute;
+    top: -25px;
+    left: 0vw;
+}
+
+#homeButton {
+    position: absolute;
+    top: -25px;
+    left: 10vw;
+}
+
+#searchMajButton {
+    position: absolute;
+    top: -25px;
+    left: 16vw;
+}
+
+#accountButton {
+    position: absolute;
+    top: -25px;
+    left: 29vw;
 }
 
 #welcomeBack {
@@ -78,6 +103,18 @@
     background-color: white;
     padding: 10px;
     border-radius: 25px;
+}
+
+#major {
+    position: fixed;
+    top: 25vh;
+    left: 15vw;
+}
+
+#filter {
+    position: fixed;
+    top: 25vh;
+    left: 70vw;
 }
 
 #help {
