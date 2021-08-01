@@ -160,21 +160,15 @@ jon.save((err)=>{if (err) console.log('error: jon')});
 
 // Final project ============================================================
 
-app.post('/add/review/:major/:university/:review/:image',(req,res)=>{
+// add review
+app.get('/add/review/:major/:university/:review/:image',(req,res)=>{
 	let user = req.cookies.login.username;
 	let maj = req.params.major;
 	let uni = req.params.university;
-	// untested, but should check if major is in collection
-	// run if not in collection:
-	if (!Major.find({major: maj})){
-		// create new major
-		console.log("Major not found, creating new one.")
-	}
 
-	if (!University.find({university: uni})){
-		// create new university
-		console.log("University not found, creating new one.")
-	}
+	// removed check if major/uni exists, because should always exist
+	// they will be in dropdown menu
+	// if user's major/uni DNE, they can add, which will be done before here
 
 	var review = new Review({
 		reviewBody: req.params.review,
@@ -209,7 +203,6 @@ app.post('/add/review/:major/:university/:review/:image',(req,res)=>{
 })
 
 app.post('/add/comment/:review/:comment',(req,res)=>{
-	let user = req.cookies.login.username;
 })
 
 app.get('/delete/review/:review',(req,res)=>{
@@ -279,6 +272,8 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 app.get('/login/:username/:password',(req,res)=>{
 	let user = req.params.username;
 	let pw = req.params.password;
+	console.log("User: " + user)
+	console.log("Pw: " + pw)
 	User.find({username: user, password: pw}).exec((error,results)=>{
 		if (results.length == 1){
 			console.log("logged in!");
