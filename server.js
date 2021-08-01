@@ -75,12 +75,10 @@ var uIllinois = new University({
 uIllinois.save((err)=>{if(err)console.log('error saving uIllinois')});
 
 // Comments
-
 var CommentSchema = new Schema({
 	commentBody: String,
 	thumbsUp: Number,
 	thumbsDown: Number,
-	comments: [{type: Schema.Types.ObjectId, ref: 'Comment'}] // comments can have comments 
 })
 
 var Comment = mongoose.model('Comment', CommentSchema);
@@ -100,7 +98,6 @@ var cmt2 = new Comment({
 cmt2.save((err)=>{if(err)console.log('error saving cmt2')});
 
 // Reviews
-
 var ReviewSchema = new Schema({
 	reviewBody: String,
 	images: [String],
@@ -112,7 +109,7 @@ var ReviewSchema = new Schema({
 var Review = mongoose.model('Review', ReviewSchema);
 
 var r1 = new Review({
-	reviewBody: "I love programming so CS is the best major for me. I don't like that math parts as much, though they are manageable.",
+	reviewBody: "review one",
 	images: [],
 	thumbsUp: 199,
 	thumbsDown: 3,
@@ -132,7 +129,6 @@ r2.save((err)=>{if(err)console.log('error saving r2')});
 bw.reviews.push(r2);
 
 // Users
-
 var UserSchema = new Schema({
 	username: String,
 	password: String,
@@ -149,6 +145,7 @@ var jesse = new User({
 	comments: []
 }); 
 jesse.save((err)=>{if (err) console.log('error: jesse')});
+jesse.reviews.push(cs);
 
 var jon = new User({
 	username: 'jonsmyth',
@@ -158,87 +155,6 @@ var jon = new User({
 }); 
 jon.save((err)=>{if (err) console.log('error: jon')});
 
-// Final project ============================================================
-
-app.post('/add/review/:major/:university/:review/:image',(req,res)=>{
-	let user = req.cookies.login.username;
-	let maj = req.params.major;
-	let uni = req.params.university;
-	// untested, but should check if major is in collection
-	// run if not in collection:
-	if (!Major.find({major: maj})){
-		// create new major
-		console.log("Major not found, creating new one.")
-	}
-
-	if (!University.find({university: uni})){
-		// create new university
-		console.log("University not found, creating new one.")
-	}
-
-	var review = new Review({
-		reviewBody: req.params.review,
-		images: req.params.image,
-		thumbsUp: 0,
-		thumbsDown: 0,
-		comments: []
-	})
-
-	review.save((err)=>{if(err)console.log('error saving review')})
-	console.log(review);
-
-	// add review to User collection
-	User.find({username: user}).exec((error,results)=>{
-		console.log("User: " + user)
-		results[0].reviews.push(review);
-	})
-
-	// add review to Major collection
-	Major.find({major:maj}).exec((error,results)=>{
-		console.log("Major: " + maj);
-		results[0].reviews.push(review);
-	})
-
-	// add review to University collection
-	University.find({university:uni}).exec((error,results)=>{
-		console.log("University: " + uni);
-		results[0].reviews.push(review);
-	})
-
-	res.send("");
-})
-
-app.post('/add/comment/:review/:comment',(req,res)=>{
-	let user = req.cookies.login.username;
-})
-
-app.get('/delete/review/:review',(req,res)=>{
-
-})
-
-app.get('/delete/comment/:comment',(req,res)=>{
-
-})
-
-app.get('/thumbsup/review/:review',(req,res)=>{
-
-})
-
-app.get('/thumbsdown/review/:review',(req,res)=>{
-
-})
-
-app.get('/thumbsup/comment/:comment',(req,res)=>{
-
-})
-
-app.get('/thumbsdown/comment/:comment',(req,res)=>{
-
-})
-
-
-
-// PA10 reuse ========================================================================
 var sessionKeys = {};
 var sessionMins = 20;
 setInterval(()=>{
@@ -275,10 +191,112 @@ mongoose.connect(mongoDBurl, {useNewUrlParser: true});
 db.dropDatabase();
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
+// add review - should be POST
+app.post('/add/review/:major/:university/:review/:image',(req,res)=>{
+	let user = 'asdf';//req.cookies.login.username;
+	let maj = req.params.major;
+	let uni = req.params.university;
+
+	// removed check if major/uni exists, because should always exist
+	// they will be in dropdown menu
+	// if user's major/uni DNE, they can add, which will be done before here
+
+	var review = new Review({
+		reviewBody: req.params.review,
+		images: req.params.image,
+		thumbsUp: 0,
+		thumbsDown: 0,
+		comments: []
+	})
+
+	review.save((err)=>{if(err)console.log('error saving review')})
+	console.log(review);
+
+	// add review to User collection
+	User.find({username: user}).exec((error,results)=>{
+		console.log("User: " + user);
+		results[0].reviews.push(review);
+	})
+
+	// add review to Major collection
+	Major.find({major: maj}).exec((error,results)=>{
+		console.log("Major: " + maj);
+		results[0].reviews.push(review);
+	})
+
+	// add review to University collection
+	University.find({university: uni}).exec((error,results)=>{
+		console.log("University: " + uni);
+		results[0].reviews.push(review);
+	})
+
+	res.send("");
+})
+
+// add comment - should be POST
+app.post('/add/comment/:review/:comment',(req,res)=>{
+	let user = 'asdf';//req.cookies.login.username;
+	let rev = req.params.review;
+
+	// removed check if major/uni exists, because should always exist
+	// they will be in dropdown menu
+	// if user's major/uni DNE, they can add, which will be done before here
+
+	var comment = new Comment({
+		commentBody: req.params.comment,
+		thumbsUp: 0,
+		thumbsDown: 0,
+	})
+
+	comment.save((err)=>{if(err)console.log('error saving comment')})
+	console.log(comment);
+
+	// add comment to User collection
+	User.find({username: user}).exec((error,results)=>{
+		console.log("User: " + user)
+		results[0].comments.push(comment);
+	})
+
+	// add comment to Review collection
+	Review.find({reviewBody: rev}).exec((error,results)=>{
+		console.log("Review: " + rev);
+		results[0].comments.push(comment);
+	})
+
+	res.send("");
+})
+
+app.get('/delete/review/:review',(req,res)=>{
+	
+})
+
+app.get('/delete/comment/:comment',(req,res)=>{
+
+})
+
+app.get('/thumbsup/review/:review',(req,res)=>{
+
+})
+
+app.get('/thumbsdown/review/:review',(req,res)=>{
+
+})
+
+app.get('/thumbsup/comment/:comment',(req,res)=>{
+
+})
+
+app.get('/thumbsdown/comment/:comment',(req,res)=>{
+
+})
+
+
 // login
 app.get('/login/:username/:password',(req,res)=>{
 	let user = req.params.username;
 	let pw = req.params.password;
+	console.log("User: " + user)
+	console.log("Pw: " + pw)
 	User.find({username: user, password: pw}).exec((error,results)=>{
 		if (results.length == 1){
 			console.log("logged in!");
@@ -317,7 +335,6 @@ app.post('/add/user/:username/:password', (req,res)=>{
 		}
 	})
 })
-
 
 // PA10 - do not reuse ==============================================================================
 // search listings

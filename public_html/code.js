@@ -10,11 +10,11 @@ File: Handles client side stuff
 // AJAX
 function login(){
 	$.ajax({
-		url: '/login/'+$('#usernameLog').val()+'/'+$('#passwordLog').val(),
+		url: '/login/'+$('#luser').val()+'/'+$('#lpassword').val(),
 		data: {},
 		method: 'GET',
 		success: (result)=>{
-			console.log('user login attempt received: '+$('#usernameLog').val()+', '+$('#passwordLog').val());
+			console.log('user login attempt received: '+$('#luser').val()+', '+$('#passwordLog').val());
 			if(result=='pass'){
 				console.log('user login successful')
 				window.location='/home.html';//?username='+$('#usernameLog').val()+'&password='+$('#passwordLog').val();
@@ -37,96 +37,96 @@ function addUser(){
 				alert("New user created! You can now login!");
 			}
 		}
-	});
-}
-
-function addReview(){
-	$.ajax({
-		url: ,
-		data: {},
-		method: 'POST',
-		success: (result)=>{
-
-		}
 	})
 }
 
-function addComment(){
-	$.ajax({
-		url: ,
-		data: {},
-		method: 'POST',
-		success: (result)=>{
+// function addReview(){
+// 	$.ajax({
+// 		url: ,
+// 		data: {},
+// 		method: 'POST',
+// 		success: (result)=>{
+
+// 		}
+// 	})
+// }
+
+// function addComment(){
+// 	$.ajax({
+// 		url: ,
+// 		data: {},
+// 		method: 'POST',
+// 		success: (result)=>{
 			
-		}
-	})
-}
+// 		}
+// 	})
+// }
 
-function deleteReview(){
-	$.ajax({
-		url: ,
-		data: {},
-		method: 'GET',
-		success: (result)=>{
+// function deleteReview(){
+// 	$.ajax({
+// 		url: ,
+// 		data: {},
+// 		method: 'GET',
+// 		success: (result)=>{
 			
-		}
-	})
-}
+// 		}
+// 	})
+// }
 
-function deleteComment(){
-	$.ajax({
-		url: ,
-		data: {},
-		method: 'GET',
-		success: (result)=>{
+// function deleteComment(){
+// 	$.ajax({
+// 		url: ,
+// 		data: {},
+// 		method: 'GET',
+// 		success: (result)=>{
 			
-		}
-	})
-}
+// 		}
+// 	})
+// }
 
-function thumbsUpReview(){
-	$.ajax({
-		url: ,
-		data: {},
-		method: 'GET',
-		success: (result)=>{
+// function thumbsUpReview(){
+// 	$.ajax({
+// 		url: ,
+// 		data: {},
+// 		method: 'GET',
+// 		success: (result)=>{
 			
-		}
-	})
-}
+// 		}
+// 	})
+// }
 
-function thumbsDownReview(){
-	$.ajax({
-		url: ,
-		data: {},
-		method: 'GET',
-		success: (result)=>{
+// function thumbsDownReview(){
+// 	$.ajax({
+// 		url: ,
+// 		data: {},
+// 		method: 'GET',
+// 		success: (result)=>{
 			
-		}
-	})
-}
+// 		}
+// 	})
+// }
 
-function thumbsUpComment(){
-	$.ajax({
-		url: ,
-		data: {},
-		method: 'GET',
-		success: (result)=>{
+// function thumbsUpComment(){
+// 	$.ajax({
+// 		url: ,
+// 		data: {},
+// 		method: 'GET',
+// 		success: (result)=>{
 			
-		}
-	})
-}
+// 		}
+// 	})
+// }
 
-function thumbsDownComment(){
-	$.ajax({
-		url: ,
-		data: {},
-		method: 'GET',
-		success: (result)=>{
+// function thumbsDownComment(){
+// 	$.ajax({
+// 		url: ,
+// 		data: {},
+// 		method: 'GET',
+// 		success: (result)=>{
 			
-		}
-	})
-}
+// 		}
+// 	})
+// }
 
 
 
