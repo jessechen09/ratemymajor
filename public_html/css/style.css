@@ -132,6 +132,18 @@ body {
     left: 15vw;
 }
 
+#reviewButton {
+    position: fixed;
+    top: 30vh;
+    left: 15vw;
+}
+
+#createReview {
+    position: fixed;
+    top: 20vh;
+    left: 10vw;
+}
+
 #filter {
     position: fixed;
     top: 25vh;
