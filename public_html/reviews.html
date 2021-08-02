@@ -1,0 +1,43 @@
+<!-- Author: Jesse Chen and Kat McGee
+    Filename: major.html
+    This html file creates the home page for RateMyMajor.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <script src="jquery.js"></script>
+  <script src="code.js"></script>
+  <title>Rate My Major</title>
+</head>
+<body>
+
+  <div id="navBar">
+    <a class="navButton" id="homeButton" href="./home.html">Home</a>
+    <a class="navButton" id="searchMajButton" href="major.html">Search By Major</a>
+    <a class="navButton" id="accountButton" href="./account.html">Account</a>
+  </div>
+
+  <h2>Add a Review</h2>
+  <div id="createReview">
+    <div id="major"></div>
+    <form action="/upload" method="post" enctype="multipart/form-data"></form>
+        <label for="title">Title</label>
+        <input id="title" type="text"></input>
+        <br/><br/>
+        <label for="review">Review</label>
+        <input id="review" type="text"></input>
+        <br/><br/>
+        <label for="price">Rating out of 5.0</label>
+        <input id="price" type="text"></input>
+        <br/><br/>
+        <input id="image" class="form-control-file" type="file" accept="image/*" name="photo" >
+        <input class="btn mt-3" type="submit" value="Create Post" onClick='addItem();'>
+    </form>
+    <br/><br/>
+  </div>
+
+  <div id="help"><a id="helpButton" href="help.html">Help</a></div>
+
+</body>
+</html>
