@@ -10,7 +10,9 @@ File: Starts server.
 const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser')
+const crypto = require('crypto')
 const app = express();
+const iterations = 1000;
 app.use(cookieParser());
 // for local testing only
 // DigOcean version uses port=80 and appropriate hostname
@@ -76,22 +78,28 @@ uIllinois.save((err)=>{if(err)console.log('error saving uIllinois')});
 
 // Comments
 var CommentSchema = new Schema({
-	commentBody: String,
+	author: String,
+	comment: String,
 	thumbsUp: Number,
 	thumbsDown: Number,
 })
 
 var Comment = mongoose.model('Comment', CommentSchema);
 
+let user1 = 'asdf';
+let user2 = 'jonsmyth';
+
 var cmt1 = new Comment({
-	commentBody: "I agree! This major is great!",
+	author: user1,
+	comment: "I agree! This major is great!",
 	thumbsUp: 10,
 	thumbsDown: 3,
 })
 cmt1.save((err)=>{if(err)console.log('error saving cmt1')});
 
 var cmt2 = new Comment({
-	commentBody: "What?! I thought this major sucked!",
+	author: user2,
+	comment: "What?! I thought this major sucked!",
 	thumbsUp: 3,
 	thumbsDown: 27,
 })
@@ -99,7 +107,8 @@ cmt2.save((err)=>{if(err)console.log('error saving cmt2')});
 
 // Reviews
 var ReviewSchema = new Schema({
-	reviewBody: String,
+	author: String,
+	review: String,
 	images: [String],
 	thumbsUp: Number,
 	thumbsDown: Number,
@@ -109,7 +118,8 @@ var ReviewSchema = new Schema({
 var Review = mongoose.model('Review', ReviewSchema);
 
 var r1 = new Review({
-	reviewBody: "review one",
+	author: user2,
+	review: "review one",
 	images: [],
 	thumbsUp: 199,
 	thumbsDown: 3,
@@ -119,7 +129,8 @@ r1.save((err)=>{if(err)console.log('error saving r1')});
 cs.reviews.push(r1);
 
 var r2 = new Review({
-	reviewBody: "I don't think there are many jobs related to basekt weaving.",
+	author: user2,
+	review: "I don't think there are many jobs related to basekt weaving.",
 	images: [],
 	thumbsUp: 33,
 	thumbsDown: 7,
@@ -132,29 +143,32 @@ bw.reviews.push(r2);
 var UserSchema = new Schema({
 	username: String,
 	password: String,
-	reviews: [{type: Schema.Types.ObjectId, ref: 'Review'}],
-	comments: [{type: Schema.Types.ObjectId, ref: 'Comment'}]
+	salt: String,
+	hash: String
+	// reviews: [{type: Schema.Types.ObjectId, ref: 'Review'}],
+	// comments: [{type: Schema.Types.ObjectId, ref: 'Comment'}]
 })
 
 var User = mongoose.model('User', UserSchema);
 
-var jesse = new User({
-	username: 'asdf',
-	password: 'asdf',
-	reviews: [],
-	comments: []
-}); 
-jesse.save((err)=>{if (err) console.log('error: jesse')});
-jesse.reviews.push(cs);
+var salt = crypto.randomBytes(65).toString('base64');
 
-var jon = new User({
-	username: 'jonsmyth',
-	password: 'badpassword',
-	reviews: [],
-	comments: []
-}); 
-jon.save((err)=>{if (err) console.log('error: jon')});
+let pw1 = user1;
+crypto.pbkdf2(pw1, salt, iterations, 64, 'sha512', (err,hash)=>{
+	if(err) throw err;
+	var jesse = new User({
+		username: user1,
+		password: pw1,
+		salt: salt,
+		hash: hash.toString('base64')
+	})
+	jesse.save((err)=>{if (err) console.log('error adding new user')});
+	console.log("User added")
+	console.log("Username: "+user1)
+	console.log("Password: "+pw1)
+})
 
+// ================================================================================
 var sessionKeys = {};
 var sessionMins = 20;
 setInterval(()=>{
@@ -183,7 +197,6 @@ app.use('/post.html',(req,res,next)=>{
 	}
 });
 
-
 app.use(express.static('public_html'));
 // app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -191,7 +204,9 @@ mongoose.connect(mongoDBurl, {useNewUrlParser: true});
 db.dropDatabase();
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-// add review - should be POST
+// adding ================================================================================
+
+// add review - should be POST - GET for testing only
 app.post('/add/review/:major/:university/:review/:image',(req,res)=>{
 	let user = 'asdf';//req.cookies.login.username;
 	let maj = req.params.major;
@@ -202,7 +217,8 @@ app.post('/add/review/:major/:university/:review/:image',(req,res)=>{
 	// if user's major/uni DNE, they can add, which will be done before here
 
 	var review = new Review({
-		reviewBody: req.params.review,
+		author: user,
+		review: req.params.review,
 		images: req.params.image,
 		thumbsUp: 0,
 		thumbsDown: 0,
@@ -213,10 +229,10 @@ app.post('/add/review/:major/:university/:review/:image',(req,res)=>{
 	console.log(review);
 
 	// add review to User collection
-	User.find({username: user}).exec((error,results)=>{
-		console.log("User: " + user);
-		results[0].reviews.push(review);
-	})
+	// User.find({username: user}).exec((error,results)=>{
+	// 	console.log("User: " + user);
+	// 	results[0].reviews.push(review);
+	// })
 
 	// add review to Major collection
 	Major.find({major: maj}).exec((error,results)=>{
@@ -230,12 +246,13 @@ app.post('/add/review/:major/:university/:review/:image',(req,res)=>{
 		results[0].reviews.push(review);
 	})
 
+	console.log("Review added");
 	res.send("");
 })
 
-// add comment - should be POST
+// add comment - should be POST - GET for testing only
 app.post('/add/comment/:review/:comment',(req,res)=>{
-	let user = 'asdf';//req.cookies.login.username;
+	let user = req.cookies.login.username;
 	let rev = req.params.review;
 
 	// removed check if major/uni exists, because should always exist
@@ -243,7 +260,8 @@ app.post('/add/comment/:review/:comment',(req,res)=>{
 	// if user's major/uni DNE, they can add, which will be done before here
 
 	var comment = new Comment({
-		commentBody: req.params.comment,
+		author: user,
+		comment: req.params.comment,
 		thumbsUp: 0,
 		thumbsDown: 0,
 	})
@@ -252,44 +270,72 @@ app.post('/add/comment/:review/:comment',(req,res)=>{
 	console.log(comment);
 
 	// add comment to User collection
-	User.find({username: user}).exec((error,results)=>{
-		console.log("User: " + user)
-		results[0].comments.push(comment);
-	})
+	// User.find({username: user}).exec((error,results)=>{
+	// 	console.log("User: " + user)
+	// 	results[0].comments.push(comment);
+	// })
 
 	// add comment to Review collection
-	Review.find({reviewBody: rev}).exec((error,results)=>{
+	Review.find({review: rev}).exec((error,results)=>{
 		console.log("Review: " + rev);
 		results[0].comments.push(comment);
 	})
 
+	console.log("Comment added");
 	res.send("");
 })
 
+// deleting =================================================================================
+
 app.get('/delete/review/:review',(req,res)=>{
-	
+	Review.deleteOne({review: req.params.review}).exec((error,results)=>{});
+	console.log("Review deleted");
+	res.send("");
 })
 
 app.get('/delete/comment/:comment',(req,res)=>{
-
+	Comment.deleteOne({comment: req.params.comment}).exec((error,results)=>{});
+	console.log("Comment deleted");
+	res.send("");
 })
 
-app.get('/thumbsup/review/:review',(req,res)=>{
+// thumbing =====================================================================================
 
+app.get('/thumbsup/review/:review',(req,res)=>{
+	Review.find({review: req.params.review}).exec((error,results)=>{
+		results[0].thumbsUp +=1;
+		results[0].save((err)=>{if(err)console.log("error thumbing up review")});
+		console.log("Review thumbs upped: " + results[0].thumbsUp);
+	})
+	res.send("");
 })
 
 app.get('/thumbsdown/review/:review',(req,res)=>{
-
+	Review.find({review: req.params.review}).exec((error,results)=>{
+		results[0].thumbsDown +=1;
+		results[0].save((err)=>{if(err)console.log("error thumbing down review")});
+		console.log("Review thumbs downed: " + results[0].thumbsDown);
+	})
+	res.send("");
 })
 
 app.get('/thumbsup/comment/:comment',(req,res)=>{
-
+	Comment.find({comment: req.params.comment}).exec((error,results)=>{
+		results[0].thumbsUp +=1;
+		results[0].save((err)=>{if(err)console.log("error thumbing up comment")});	
+		console.log("Comment thumbs upped: " + results[0].thumbsUp);	
+	})
+	res.send("");
 })
 
 app.get('/thumbsdown/comment/:comment',(req,res)=>{
-
+	Comment.find({comment: req.params.comment}).exec((error,results)=>{
+		results[0].thumbsDown +=1;
+		results[0].save((err)=>{if(err)console.log("error thumbing down comment")});
+		console.log("Comment thumbs downed: " + results[0].thumbsDown);	
+	})
+	res.send("");
 })
-
 
 // login
 app.get('/login/:username/:password',(req,res)=>{
@@ -297,15 +343,27 @@ app.get('/login/:username/:password',(req,res)=>{
 	let pw = req.params.password;
 	console.log("User: " + user)
 	console.log("Pw: " + pw)
-	User.find({username: user, password: pw}).exec((error,results)=>{
+	User.find({username: user}).exec((error,results)=>{
 		if (results.length == 1){
-			console.log("logged in!");
-			let sessionKey = Math.floor(Math.random()*1000);
-			sessionKeys[user] = [sessionKey, Date.now()];
-			res.cookie("login", {username: user, key: sessionKey}, {maxAge: sessionMins*60000});
-			res.send('pass');
+			var salt = results[0].salt;
+			console.log(salt);
+			crypto.pbkdf2(pw, salt, iterations, 64, 'sha512', (err,hash)=>{
+				if (err) throw err;
+				let hStr = hash.toString('base64');
+				if(results[0].hash == hStr) {
+					console.log("logged in!");
+					let sessionKey = Math.floor(Math.random()*1000);
+					sessionKeys[user] = [sessionKey, Date.now()];
+					res.cookie("login", {username: user, key: sessionKey}, {maxAge: sessionMins*60000});
+					res.send('pass');
+				} else {
+					console.log("hash check failed, so login failed!")
+					res.send("hash check failed");
+				}
+			})
+			
 		} else {
-			console.log("log in failed!");
+			console.log("user not found, so log in failed!");
 			res.send('Incorrect username or password. Please try again.');
 		}
 	})
@@ -321,17 +379,23 @@ app.post('/add/user/:username/:password', (req,res)=>{
 			console.log("user exists: "+results[0].username);
 			res.send('error');
 		} else {
-			var newUser = new User({
-				username: user,
-				password: pw,
-				lists: [],
-				purchases: []
+			var salt = crypto.randomBytes(65).toString('base64');
+
+			crypto.pbkdf2(pw, salt, iterations, 64, 'sha512', (err,hash)=>{
+				if(err) throw err;
+				let hashStr = hash.toString('base64');
+				var newUser = new User({
+					username: user,
+					password: pw,
+					salt: salt,
+					hash: hashString
+				})
+				newUser.save((err)=>{if (err) console.log('error adding new user')});
+				console.log("User added")
+				console.log("Username: "+user)
+				console.log("Password: "+pw)
+				res.send("");
 			})
-			newUser.save((err)=>{if (err) console.log('error adding new user')});
-			console.log("User added")
-			console.log("Username: "+user)
-			console.log("Password: "+pw)
-			res.send("");
 		}
 	})
 })
