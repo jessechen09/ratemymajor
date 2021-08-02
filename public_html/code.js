@@ -27,57 +27,57 @@ function login(){
 
 function addUser(){
 	$.ajax({
-		url: '/add/user/'+$('#username').val()+'/'+$('#password').val(),
+		url: '/add/user/'+$('#user').val()+'/'+$('#password').val(),
 		data: {},
 		method: 'POST',
 		success: (result)=>{
 			if(result=='error'){
 				alert("User exists. Please try another username.");
-			} else{
+			} else {
 				alert("New user created! You can now login!");
 			}
 		}
 	})
 }
 
-function searchMaj(){
-	$.ajax({
-		url: '/search/'+ $('#searchMajor').val(),
-		data: {},
-		method: 'GET',
-		success: (result)=>{
-			console.log('item added');
-			$("#reviewSection").html(result);
-		}
-	});
-} 
+// function searchMaj(){
+// 	$.ajax({
+// 		url: '/search/'+ $('#searchMajor').val(),
+// 		data: {},
+// 		method: 'GET',
+// 		success: (result)=>{
+// 			console.log('item added');
+// 			$("#reviewSection").html(result);
+// 		}
+// 	});
+// } 
 
-function filterBy(){
-	$.ajax({
-		url: '/filter/' + $('#filterBy').val(),
-		data: {},
-		method: 'GET',
-		success: (result)=>{
-			console.log('view listing success');
-			$("#reviewSection").html(result);
-		}
-	});
-}
+// function filterBy(){
+// 	$.ajax({
+// 		url: '/filter/' + $('#filterBy').val(),
+// 		data: {},
+// 		method: 'GET',
+// 		success: (result)=>{
+// 			console.log('view listing success');
+// 			$("#reviewSection").html(result);
+// 		}
+// 	});
+// }
 
-function searchUni(){
-	$.ajax({
-		url: '/search/'+ $('#searchUniversity').val(),
-		data: {},
-		method: 'GET',
-		success: (result)=>{
-			console.log('item added');
-			$("#reviewSection").html(result);
-		}
-	});
-} 
+// function searchUni(){
+// 	$.ajax({
+// 		url: '/search/'+ $('#searchUniversity').val(),
+// 		data: {},
+// 		method: 'GET',
+// 		success: (result)=>{
+// 			console.log('item added');
+// 			$("#reviewSection").html(result);
+// 		}
+// 	});
+// } 
 
 // function addReview(){
-// 	$.ajax({
+// 	$.ajax({  
 // 		url: ,
 // 		data: {},
 // 		method: 'POST',

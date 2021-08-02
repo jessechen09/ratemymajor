@@ -337,6 +337,7 @@ app.get('/thumbsdown/comment/:comment',(req,res)=>{
 	res.send("");
 })
 
+// accounts ========================================================================
 // login
 app.get('/login/:username/:password',(req,res)=>{
 	let user = req.params.username;
@@ -383,7 +384,7 @@ app.post('/add/user/:username/:password', (req,res)=>{
 
 			crypto.pbkdf2(pw, salt, iterations, 64, 'sha512', (err,hash)=>{
 				if(err) throw err;
-				let hashStr = hash.toString('base64');
+				let hashString = hash.toString('base64');
 				var newUser = new User({
 					username: user,
 					password: pw,
