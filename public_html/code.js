@@ -35,6 +35,7 @@ function addUser(){
 				alert("User exists. Please try another username.");
 			} else {
 				alert("New user created! You can now login!");
+				window.location='index.html';
 			}
 		}
 	})
@@ -180,70 +181,3 @@ function addUser(){
 // 		}
 // 	});
 // } 
-
-
-
-// unused ========================================================
-function searchListings(){
-	$.ajax({
-		url: '/search/listings/'+$('#search').val(),
-		data: {},
-		method: 'GET',
-		success: (result)=>{
-			console.log('item added');
-			$("#right").html(result);
-		}
-	});
-} 
-
-function viewListings(){
-	$.ajax({
-		url: '/view/listings/',
-		data: {},
-		method: 'GET',
-		success: (result)=>{
-			console.log('view listing success');
-			$("#right").html(result);
-		}
-	});
-}
-
-function viewPurchases(){
-	$.ajax({
-		url: '/view/purchases/',
-		data: {},
-		method: 'GET',
-		success: (result)=>{
-			console.log('view purchases success');
-			$("#right").html(result);
-		}
-	});
-}
-
-function postItem(){
-	window.location='/post.html'
-}
-
-function createListing(){
-	$.ajax({
-		url: '/add/item/'+$('#title').val()+'/'+$('#desc').val()+'/'+$('#img').val()+'/'+$('#price').val()+'/'+$('#stat').val(),
-		data: {},
-		method: 'POST',
-		success: (result)=>{
-			console.log('item added');
-			window.location='/home.html'
-		}
-	});
-}
-
-function buyItem(item){
-	$.ajax({
-		url: '/buy/item/'+item,
-		data: {},
-		method: 'GET',
-		success: (result)=>{
-			console.log('item bought');
-			$
-		}
-	});
-}
