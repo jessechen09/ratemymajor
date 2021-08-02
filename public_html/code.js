@@ -40,6 +40,42 @@ function addUser(){
 	})
 }
 
+function searchMaj(){
+	$.ajax({
+		url: '/search/'+ $('#searchMajor').val(),
+		data: {},
+		method: 'GET',
+		success: (result)=>{
+			console.log('item added');
+			$("#reviewSection").html(result);
+		}
+	});
+} 
+
+function filterBy(){
+	$.ajax({
+		url: '/filter/' + $('#filterBy').val(),
+		data: {},
+		method: 'GET',
+		success: (result)=>{
+			console.log('view listing success');
+			$("#reviewSection").html(result);
+		}
+	});
+}
+
+function searchUni(){
+	$.ajax({
+		url: '/search/'+ $('#searchUniversity').val(),
+		data: {},
+		method: 'GET',
+		success: (result)=>{
+			console.log('item added');
+			$("#reviewSection").html(result);
+		}
+	});
+} 
+
 // function addReview(){
 // 	$.ajax({
 // 		url: ,
@@ -127,6 +163,23 @@ function addUser(){
 // 		}
 // 	})
 // }
+
+// function logout(){
+// 	$.ajax({
+// 		url: '/login/'+$('#luser').val()+'/'+$('#lpassword').val(),
+// 		data: {},
+// 		method: 'GET',
+// 		success: (result)=>{
+// 			console.log('user login attempt received: '+$('#luser').val()+', '+$('#passwordLog').val());
+// 			if(result=='pass'){
+// 				console.log('user login successful')
+// 				window.location='/home.html';//?username='+$('#usernameLog').val()+'&password='+$('#passwordLog').val();
+// 			} else {
+// 				alert("Login failed. Please try again.");
+// 			}
+// 		}
+// 	});
+// } 
 
 
 

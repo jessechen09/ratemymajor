@@ -21,11 +21,21 @@
   <div id="major">
     <label for="searchMajor">Search By Major Keyword</label>
     <input id="searchMajor" type="text">
-    <input type="button" id="search" onclick="searchMaj();" value="Search"/>
+    <input type="button" id="searchMaj" onclick="searchMaj();" value="Search"/>
   </div>
 
   <div id="filter">
-    <input type="button" id="filterBy" onclick="filterBy();" value="Change Filters"/>
+    <select name="filterBy" id="filterBy" onclick="filterBy();">
+      <option value="static">Change Filters</option>
+      <option value="aToZ">Alphabetize Universities A to Z</option>
+      <option value="zToA">Alphabetize Universities Z to A</option>
+      <option value="mostLikes">High to Low Likes</option>
+      <option value="mostDislikes">High to Low Dislikes</option>
+    </select>
+    <br/><br/>
+    <label for="searchUni">Search For a Specific University</label><br/>
+    <input id="searchUni" type="text">
+    <input type="button" id="searchUniversity" onclick="searchUni();" value="Search"/>
   </div>
 
   <div id="reviewSection"></div>
