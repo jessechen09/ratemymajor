@@ -1,3 +1,9 @@
+body {
+    min-width: 700px;      
+    width: auto !important;
+    width: 700px; 
+}
+ 
 #navBar {
     position: absolute;
     width: 100%;
@@ -7,36 +13,30 @@
     margin-left: auto;
     margin-right: auto;
     background-color: rgb(80, 100, 250);
+    min-width: 700px;
 }
 
 .navButton {
     color: rgb(14, 3, 44);
-    padding: 4%;
     margin-right: 10px;
-}
-
-#logoButton {
-    position: absolute;
-    top: -25px;
-    left: 0vw;
 }
 
 #homeButton {
     position: absolute;
-    top: -25px;
-    left: 10vw;
+    top: 2vh;
+    left: 5vw;
 }
 
 #searchMajButton {
     position: absolute;
-    top: -25px;
-    left: 16vw;
+    top: 2vh;
+    left: 13vw;
 }
 
 #accountButton {
     position: absolute;
-    top: -25px;
-    left: 29vw;
+    top: 2vh;
+    left: 90vw;
 }
 
 #welcomeBack {
@@ -138,6 +138,13 @@
     left: 70vw;
 }
 
+#accountInfo {
+    margin-top: 15vh;
+    margin-left: 15vw;
+    width: 50vw;
+    top: 25vh;
+}
+
 #help {
     position: absolute;
     right: 20px;
@@ -145,4 +152,11 @@
     background-color: white;
     padding: 10px;
     border-radius: 25px;
+}
+
+#frequentlyAskedQuestions {
+    margin-top: 15vh;
+    margin-left: 15vw;
+    width: 50vw;
+    top: 25vh;
 }
