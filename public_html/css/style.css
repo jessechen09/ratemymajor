@@ -174,7 +174,23 @@ body {
 }
 
 #reviewSection {
-    position: absolute;
+    position: fixed;
     top: 35vh;
     left: 15vw;
+}
+
+.reviewFrame {
+    border: 1px solid black;
+    padding: 5px;
+    width: 50vw;
+    margin-bottom: 20px;
+}
+
+.reviewText{
+
+}
+
+.reviewButtons{
+    margin-right: 20px;
+    margin-top: 10px;
 }
