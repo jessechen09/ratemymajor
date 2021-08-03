@@ -172,3 +172,9 @@ body {
     width: 50vw;
     top: 25vh;
 }
+
+#reviewSection {
+    position: absolute;
+    top: 35vh;
+    left: 15vw;
+}
