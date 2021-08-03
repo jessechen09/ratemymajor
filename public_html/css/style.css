@@ -1,8 +1,16 @@
+/* 
+ *all html files
+*/
+
 body {
     min-width: 700px;      
     width: auto !important;
     width: 700px; 
 }
+
+/* 
+ *navigation elements
+*/
  
 #navBar {
     position: fixed;
@@ -39,6 +47,10 @@ body {
     left: 90vw;
 }
 
+/* 
+ *index.html
+*/
+
 #welcomeBack {
     position: fixed;
     width: 45vw;
@@ -57,6 +69,26 @@ body {
     color: white;
 }
 
+#login {
+    position: fixed;
+    width: 55vw;
+    height: 100%;
+    left: 45vw;
+    margin: auto;
+    margin-top: 25vh;
+    text-align: center;
+}
+
+#signInButton {
+    background-color: white;
+    padding: 10px;
+    border-radius: 25px;
+}
+
+/* 
+ *signup.html
+*/
+
 #welcome {
     position: fixed;
     width: 45vw;
@@ -70,16 +102,6 @@ body {
 }
 
 .welcomeText {
-    text-align: center;
-}
-
-#login {
-    position: fixed;
-    width: 55vw;
-    height: 100%;
-    left: 45vw;
-    margin: auto;
-    margin-top: 25vh;
     text-align: center;
 }
 
@@ -99,11 +121,9 @@ body {
     margin-top: 29vh;
 }
 
-#signInButton {
-    background-color: white;
-    padding: 10px;
-    border-radius: 25px;
-}
+/* 
+ *home.html
+*/
 
 #welcomeHome {
     margin: auto;
@@ -125,6 +145,10 @@ body {
     margin-top: 20px;
     border-radius: 25px;
 }
+
+/* 
+ *major.html
+*/
 
 #searchBar {
     position: fixed;
@@ -161,35 +185,6 @@ body {
     left: 65vw;
 }
 
-#createReview {
-    position: fixed;
-    top: 20vh;
-    left: 10vw;
-}
-
-#accountInfo {
-    margin-top: 15vh;
-    margin-left: 15vw;
-    width: 50vw;
-    top: 25vh;
-}
-
-#help {
-    position: fixed;
-    right: 20px;
-    bottom: 20px;
-    background-color: white;
-    padding: 10px;
-    border-radius: 25px;
-}
-
-#frequentlyAskedQuestions {
-    margin-top: 15vh;
-    margin-left: 15vw;
-    width: 50vw;
-    top: 25vh;
-}
-
 #reviewSection {
     position: relative;
     top: 25vh;
@@ -212,4 +207,45 @@ body {
 .revBoxUni {
     /*position: absolute;*/
     /*left: 20vw;*/
+}
+
+/* 
+ *reviews.html
+*/
+
+#createReview {
+    position: fixed;
+    top: 20vh;
+    left: 10vw;
+}
+
+/* 
+ *account.html
+*/
+
+#accountInfo {
+    margin-top: 15vh;
+    margin-left: 15vw;
+    width: 50vw;
+    top: 25vh;
+}
+
+/* 
+ *help.html
+*/
+
+#help {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    background-color: white;
+    padding: 10px;
+    border-radius: 25px;
+}
+
+#frequentlyAskedQuestions {
+    margin-top: 15vh;
+    margin-left: 15vw;
+    width: 50vw;
+    top: 25vh;
 }
