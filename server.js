@@ -297,21 +297,24 @@ app.post('/add/review/:major/:university/:review/:image',(req,res)=>{
 	console.log(review);
 
 	// add review to User collection
-	// User.find({username: user}).exec((error,results)=>{
-	// 	console.log("User: " + user);
-	// 	results[0].reviews.push(review);
-	// })
+	User.find({username: user}).exec((error,results)=>{
+		console.log("User: " + user)
+		results[0].reviews.push(review);
+		results[0].save((err)=>{if(err)console.log('error saving user after adding new review')})
+	})
 
 	// add review to Major collection
 	Major.find({major: maj}).exec((error,results)=>{
 		console.log("Major: " + maj);
 		results[0].reviews.push(review);
+		results[0].save((err)=>{if(err)console.log('error saving major after adding new review')})
 	})
 
 	// add review to University collection
 	University.find({university: uni}).exec((error,results)=>{
 		console.log("University: " + uni);
 		results[0].reviews.push(review);
+		results[0].save((err)=>{if(err)console.log('error university review after adding new review')})
 	})
 
 	console.log("Review added");
@@ -342,6 +345,7 @@ app.post('/add/comment/:reviewID/:comment',(req,res)=>{
 	User.find({username: user}).exec((error,results)=>{
 		console.log("User: " + user)
 		results[0].comments.push(comment);
+		results[0].save((err)=>{if(err)console.log('error saving user after adding new comment')})
 	})
 
 	// add comment to Review collection
@@ -487,8 +491,8 @@ app.post('/show/account/reviews', (req,res)=>{
 		let reviews = results[0].reviews;
 
 		Review.find({_id: reviews}).exec((error,results)=>{
+			let html = "<h2>Reviews</h2>";
 			if(results.length>0){
-				let html = "<h2>Reviews</h2>";
 				for(i=0;i<results.length;i++){
 					let rev = results[i];
 					html += "<div class='reviewFrame'>"
@@ -497,11 +501,13 @@ app.post('/show/account/reviews', (req,res)=>{
 					html += "<div class='reviewText'> <b>Review:</b> "+rev.review+"</div><br>";
 					html += "<b> Thumbs up:</b> "+rev.thumbsUp;
 					html += "<b>, Thumbs down:</b> "+rev.thumbsDown;
-				html += "</div>" // close reviewFrame
-			}
+					html += "</div>" // close reviewFrame
+				}
+			} else {
+				html += "<div>No reviews to show.</div><br>"
+			}	
 			res.send(html);
-		}
-	})
+		})
 	})
 })
 
@@ -512,19 +518,21 @@ app.post('/show/account/comments', (req,res)=>{
 		let comments = results[0].comments;
 
 		Comment.find({_id: comments}).exec((error,results)=>{
+			let html = "<h2>Comments</h2>";
 			if(results.length>0){
-				let html = "<h2>Comments</h2>";
 				for(i=0;i<results.length;i++){
 					let rev = results[i];
 					html += "<div class='reviewFrame'>"
 					html += "<div class='reviewText'> <b>Review:</b> "+rev.comment+"</div><br>";
 					html += "<b>Thumbs up:</b> "+rev.thumbsUp;
 					html += ", <b>Thumbs down:</b> "+rev.thumbsDown;
-				html += "</div>" // close reviewFrame
+					html += "</div>" // close reviewFrame
+				} 
+			} else {
+				html += "<div>No comments to show.</div><br>"
 			}
 			res.send(html);
-		}
-	})
+		})
 	})
 })
 
