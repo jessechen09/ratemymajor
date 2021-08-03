@@ -5,7 +5,7 @@ body {
 }
  
 #navBar {
-    position: absolute;
+    position: fixed;
     width: 100%;
     height: 8%;
     left:0px;
@@ -158,7 +158,7 @@ body {
 }
 
 #help {
-    position: absolute;
+    position: fixed;
     right: 20px;
     bottom: 20px;
     background-color: white;
@@ -174,9 +174,11 @@ body {
 }
 
 #reviewSection {
-    position: fixed;
+    position: relative;
     top: 35vh;
     left: 15vw;
+    overflow: auto;
+    z-index: -1;
 }
 
 .reviewFrame {
@@ -192,5 +194,9 @@ body {
 
 .reviewButtons{
     margin-right: 20px;
-    margin-top: 10px;
+}
+
+.revBoxUni{
+    /*position: absolute;*/
+    /*left: 20vw;*/
 }
