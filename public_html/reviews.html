@@ -22,14 +22,42 @@
   <div id="createReview">
     <div id="major"></div>
     <form action="/upload" method="post" enctype="multipart/form-data"></form>
+        <select name="chooseMaj" id="chooseMaj">
+            <option value="static1">Choose a Major:</option>
+            <option value="asu">Accounting</option>
+            <option value="hu">Aerospace Engineering</option>
+            <option value="uw">Business</option>
+            <option value="mit">Communication</option>
+            <option value="pu">Computer Science</option>
+            <option value="uOfI">Nursing</option>
+            <option value="su">Public Health</option>
+            <option value="uOfAl">Public Relations</option>
+            <option value="uOfA">Underwater Basketweaving</option>
+            <option value="ucb">Zoology</option>
+        </select>
+        <br/><br/>
+        <select name="chooseUni" id="chooseUni">
+            <option value="static2">Choose a University:</option>
+            <option value="asu">Arizona State University</option>
+            <option value="hu">Harvard University</option>
+            <option value="mit">Massachusetts Institute of Technology</option>
+            <option value="pu">Princeton University</option>
+            <option value="su">Stanford University</option>
+            <option value="uOfAl">University of Alabama</option>
+            <option value="uOfA">University of Arizona</option>
+            <option value="ucb">University of California-- Berkeley</option>
+            <option value="uOfI">University of Illinois</option>
+            <option value="uw">University of Washington</option>
+        </select>
+        <br/><br/>
         <label for="title">Title</label>
         <input id="title" type="text"></input>
         <br/><br/>
         <label for="review">Review</label>
         <input id="review" type="text"></input>
         <br/><br/>
-        <label for="price">Rating out of 5.0</label>
-        <input id="price" type="text"></input>
+        <label for="rating">Rating out of 5.0</label>
+        <input type="range" min="1" max="5" value="2.5" class="slider" id="rating">
         <br/><br/>
         <input id="image" class="form-control-file" type="file" accept="image/*" name="photo" >
         <input class="btn mt-3" type="submit" value="Create Post" onClick='addReview();'>
