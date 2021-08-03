@@ -128,16 +128,16 @@ var Review = mongoose.model('Review', ReviewSchema);
 const characters ='abcdefghijklmnopqrstuvwxyz ';
 
 function generateString(length) {
-    let result = ' ';
-    const charactersLength = characters.length;
-    for ( let i = 0; i < length; i++ ) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-        if(Math.random()<.1){
-        	result += " "
-        }
-    }
+	let result = ' ';
+	const charactersLength = characters.length;
+	for ( let i = 0; i < length; i++ ) {
+		result += characters.charAt(Math.floor(Math.random() * charactersLength));
+		if(Math.random()<.1){
+			result += " "
+		}
+	}
 
-    return result;
+	return result;
 }
 
 var r1 = new Review({
@@ -191,6 +191,19 @@ var r4 = new Review({
 })
 r4.save((err)=>{if(err)console.log('error saving r4')});
 ce.reviews.push(r4);
+
+var r5 = new Review({
+	author: user2,
+	review: generateString(242),
+	images: [],
+	thumbsUp: 13,
+	thumbsDown: 7,
+	comments: [],
+	major: "Computer Engineering",
+	university: "University of Illinois"
+})
+r5.save((err)=>{if(err)console.log('error saving r4')});
+ce.reviews.push(r5);
 
 // Users
 var UserSchema = new Schema({
@@ -457,70 +470,65 @@ app.post('/add/user/:username/:password', (req,res)=>{
 
 // search ===========================================================================
 
-// majors
-app.get('/search/major/:keyword', (req,res)=>{
-	let keyword = req.params.keyword;
-	Review.find({major: {$regex:new RegExp(keyword, "ig")}}).exec((error,results)=>{
+// html stuff
+function makeHtml(rev,id){
+	let html = "";
+	html += "<div class='reviewFrame'>"
+	html += "<div><b>Major:</b> "+rev.major+", ";
+	html += "<b>University:</b> "+rev.university+"</div><br>";
+	html += "<div class='reviewText'> <b>Review:</b> "+rev.review+"</div><br>";
+	html += rev.thumbsUp + " ";
+	html += "<input class='reviewButtons' type='button' onclick='thumbsUpReview("+id+");' value='Thumbs Up'/>"
+	html += rev.thumbsDown + " ";
+	html += "<input class='reviewButtons' type='button' onclick='thumbsDownReview("+id+");' value='Thumbs Down'/>"
+	html += "<input class='reviewButtons' type='button' onclick='addComment("+id+");' value='Comment'/>"
+	html += "</div>" // close reviewFrame
+	return html;
+}
 
-		// sorts A-Z order
-		results.sort((a,b)=>{
-			let nameA = a.major.toLowerCase();
-			let nameB = b.major.toLowerCase();
-			if (nameA < nameB) {
-				return -1;
-			}
-			if (nameA > nameB) {
-				return 1;
-			}
+function processSearch(results){
+	// sorts A-Z order
+	results.sort((a,b)=>{
+		let nameA = a.major.toLowerCase();
+		let nameB = b.major.toLowerCase();
+		if (nameA < nameB) {
+			return -1;
+		}
+		if (nameA > nameB) {
+			return 1;
+		}
 
 			// names must be equal
 			return 0;
 		})
 
+	let html = "";
+
+	for(i=0; i<results.length; i++){
+		let rev = results[i];
+		let id = rev._id;
+		html += makeHtml(rev,id);
+	}
+	return html;
+}
+
+// majors
+app.get('/search/major/:keyword', (req,res)=>{
+	let keyword = req.params.keyword;
+	Review.find({major: {$regex:new RegExp(keyword, "ig")}}).exec((error,results)=>{
 		console.log("Reviews with majors with the substring "+"'"+keyword+"' in their major names:")
 		console.log(results)
-
-		let html = "";
-
-		for(i=0; i<results.length; i++){
-			let rev = results[i]
-			html += "<div class='reviewFrame'>"
-			html += "<div><b>Major:</b> "+rev.major+", ";
-			html += "<b>University:</b> "+rev.university+"</div><br>";
-			html += "<div class='reviewText'> <b>Review:</b> "+rev.review+"</div><br>";
-			html += "<input class='reviewButtons' type='button' onclick='thumbsUpReview(id);' value='Thumbs Up'/>"
-			html += "<input class='reviewButtons' type='button' onclick='thumbsDownReview(id);' value='Thumbs Down'/>"
-			html += "<input class='reviewButtons' type='button' onclick='addComment();' value='Comment'/>"
-			html += "</div>" // close reviewFrame
-		}
-
-		res.send(html);
+		res.send(processSearch(results));
 	});
 })
 
 // universities
 app.get('/search/university/:keyword', (req,res)=>{
 	let keyword = req.params.keyword;
-	University.find({university: {$regex:new RegExp(keyword, "ig")}}).exec((error,results)=>{
-		
-		// // sorts A-Z order
-		// results.sort((a,b)=>{
-		// 	let nameA = a.university.toLowerCase();
-		// 	let nameB = b.university.toLowerCase();
-		// 	if (nameA < nameB) {
-		// 		return -1;
-		// 	}
-		// 	if (nameA > nameB) {
-		// 		return 1;
-		// 	}
-
-		// 	// names must be equal
-		// 	return 0;
-		// })
-		
-		console.log("Universities with the substring "+"'"+keyword+"' in their names:")
+	Review.find({university: {$regex:new RegExp(keyword, "ig")}}).exec((error,results)=>{
+		console.log("Reviews with universities with the substring "+"'"+keyword+"' in their names:")
 		console.log(results)
-		res.send(results);
+		res.send(processSearch(results));
 	});
 })
 
