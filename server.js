@@ -159,7 +159,7 @@ var r2 = new Review({
 	images: [],
 	thumbsUp: 33,
 	thumbsDown: 7,
-	comments: [cmt1],
+	comments: [cmt1, cmt2],
 	major: "Basket Weaving",
 	university: "University of Arizona"
 })
@@ -367,40 +367,40 @@ app.get('/delete/comment/:comment',(req,res)=>{
 
 // thumbing =====================================================================================
 
-app.get('/thumbsup/review/:review',(req,res)=>{
-	Review.find({review: req.params.review}).exec((error,results)=>{
-		results[0].thumbsUp +=1;
+app.get('/thumbsup/review/:id',(req,res)=>{
+	Review.find({_id: req.params.id}).exec((error,results)=>{
+		results[0].thumbsUp += 1;
 		results[0].save((err)=>{if(err)console.log("error thumbing up review")});
 		console.log("Review thumbs upped: " + results[0].thumbsUp);
+		res.send(results[0].thumbsUp.toString());
 	})
-	res.send("");
 })
 
-app.get('/thumbsdown/review/:review',(req,res)=>{
-	Review.find({review: req.params.review}).exec((error,results)=>{
-		results[0].thumbsDown +=1;
+app.get('/thumbsdown/review/:id',(req,res)=>{
+	Review.find({_id: req.params.id}).exec((error,results)=>{
+		results[0].thumbsDown +=1 ;
 		results[0].save((err)=>{if(err)console.log("error thumbing down review")});
 		console.log("Review thumbs downed: " + results[0].thumbsDown);
+		res.send(results[0].thumbsDown.toString());
 	})
-	res.send("");
 })
 
-app.get('/thumbsup/comment/:comment',(req,res)=>{
-	Comment.find({comment: req.params.comment}).exec((error,results)=>{
-		results[0].thumbsUp +=1;
-		results[0].save((err)=>{if(err)console.log("error thumbing up comment")});	
-		console.log("Comment thumbs upped: " + results[0].thumbsUp);	
+app.get('/thumbsup/comment/:id',(req,res)=>{
+	Comment.find({_id: req.params.id}).exec((error,results)=>{
+		results[0].thumbsUp += 1;
+		results[0].save((err)=>{if(err)console.log("error thumbing up comment")});
+		console.log("Review thumbs upped: " + results[0].thumbsUp);
+		res.send(results[0].thumbsUp.toString());
 	})
-	res.send("");
 })
 
-app.get('/thumbsdown/comment/:comment',(req,res)=>{
-	Comment.find({comment: req.params.comment}).exec((error,results)=>{
+app.get('/thumbsdown/comment/:id',(req,res)=>{
+	Comment.find({_id: req.params.id}).exec((error,results)=>{
 		results[0].thumbsDown +=1;
 		results[0].save((err)=>{if(err)console.log("error thumbing down comment")});
 		console.log("Comment thumbs downed: " + results[0].thumbsDown);	
+		res.send(results[0].thumbsDown.toString());
 	})
-	res.send("");
 })
 
 // accounts ========================================================================
@@ -468,7 +468,28 @@ app.post('/add/user/:username/:password', (req,res)=>{
 	})
 })
 
-// search ===========================================================================
+// search & review section ============================================================
+
+app.post('/show/comments/:id', (req,res)=>{
+	Review.find({_id: req.params.id}).exec((error,results)=>{
+		let html = "";
+		console.log(results[0].comments);
+		Comment.find({_id: results[0].comments}).exec((error,results)=>{
+			for (i=0;i<results.length;i++){
+				let cmt = results[i];
+				let id = cmt._id;
+				html += "<div class=commentFrame>"
+				html += "<div><b>"+cmt.author+":</b> "+cmt.comment+"</div><br>";
+				html += "<span id="+id+"up>"+cmt.thumbsUp+" </span>";
+				html += "<input id="+id+"UpButton class='reviewButtons' type='button' onclick=thumbsUpComment('"+id+"'); value='Thumbs Up'/>"
+				html += "<span id="+id+"down>"+cmt.thumbsDown+" </span>";
+				html += "<input id="+id+"DownButton class='reviewButtons' type='button' onclick=thumbsDownComment('"+id+"'); value='Thumbs Down'/>"
+				html += "</div>"
+			}
+			res.send(html);
+		})
+	})	
+})
 
 // html stuff
 function makeHtml(rev,id){
@@ -477,11 +498,17 @@ function makeHtml(rev,id){
 	html += "<div><b>Major:</b> "+rev.major+", ";
 	html += "<b>University:</b> "+rev.university+"</div><br>";
 	html += "<div class='reviewText'> <b>Review:</b> "+rev.review+"</div><br>";
-	html += rev.thumbsUp + " ";
-	html += "<input class='reviewButtons' type='button' onclick='thumbsUpReview("+id+");' value='Thumbs Up'/>"
-	html += rev.thumbsDown + " ";
-	html += "<input class='reviewButtons' type='button' onclick='thumbsDownReview("+id+");' value='Thumbs Down'/>"
-	html += "<input class='reviewButtons' type='button' onclick='addComment("+id+");' value='Comment'/>"
+	html += "<span id="+id+"up>"+rev.thumbsUp+" </span>";
+	html += "<input id="+id+"UpButton class='reviewButtons' type='button' onclick=thumbsUpReview('"+id+"'); value='Thumbs Up'/>"
+	html += "<span id="+id+"down>"+rev.thumbsDown+" </span>";
+	html += "<input id="+id+"DownButton class='reviewButtons' type='button' onclick=thumbsDownReview('"+id+"'); value='Thumbs Down'/>"
+	if(rev.comments.length > 0){
+		html += "<input class='reviewButtons' id="+id+"CmtButton type='button' onclick=showComments('"+id+"'); value='Show comments'/>"
+		html += "<div id="+id+"cmts></div>"
+	}
+	
+	let comments = rev.comments;
+
 	html += "</div>" // close reviewFrame
 	return html;
 }
@@ -497,7 +524,6 @@ function processSearch(results){
 		if (nameA > nameB) {
 			return 1;
 		}
-
 			// names must be equal
 			return 0;
 		})
@@ -513,7 +539,7 @@ function processSearch(results){
 }
 
 // majors
-app.get('/search/major/:keyword', (req,res)=>{
+app.post('/search/major/:keyword', (req,res)=>{
 	let keyword = req.params.keyword;
 	Review.find({major: {$regex:new RegExp(keyword, "ig")}}).exec((error,results)=>{
 		console.log("Reviews with majors with the substring "+"'"+keyword+"' in their major names:")
@@ -523,7 +549,7 @@ app.get('/search/major/:keyword', (req,res)=>{
 })
 
 // universities
-app.get('/search/university/:keyword', (req,res)=>{
+app.post('/search/university/:keyword', (req,res)=>{
 	let keyword = req.params.keyword;
 	Review.find({university: {$regex:new RegExp(keyword, "ig")}}).exec((error,results)=>{
 		console.log("Reviews with universities with the substring "+"'"+keyword+"' in their names:")
