@@ -1,8 +1,8 @@
 /* 
  *all html files
-*/
+ */
 
-body {
+ body {
     min-width: 700px;      
     width: auto !important;
     width: 700px; 
@@ -10,9 +10,9 @@ body {
 
 /* 
  *navigation elements
-*/
+ */
  
-#navBar {
+ #navBar {
     position: fixed;
     width: 100%;
     height: 8%;
@@ -49,9 +49,9 @@ body {
 
 /* 
  *index.html
-*/
+ */
 
-#welcomeBack {
+ #welcomeBack {
     position: fixed;
     width: 45vw;
     height: 100%;
@@ -87,9 +87,9 @@ body {
 
 /* 
  *signup.html
-*/
+ */
 
-#welcome {
+ #welcome {
     position: fixed;
     width: 45vw;
     height: 100%;
@@ -123,9 +123,9 @@ body {
 
 /* 
  *home.html
-*/
+ */
 
-#welcomeHome {
+ #welcomeHome {
     margin: auto;
     margin-top: 20vh;
     text-align: center;
@@ -148,7 +148,17 @@ body {
 
 /* 
  *major.html
-*/
+ */
+
+#addCmtRow{
+   margin-top: 10px;
+}
+
+.commentFrame {
+   border: 2px solid black;
+   padding: 5px;
+   margin-top: 10px;
+}
 
 #searchBar {
     position: fixed;
@@ -194,7 +204,7 @@ body {
 }
 
 .reviewFrame {
-    border: 1px solid black;
+    border: 2px solid black;
     padding: 5px;
     width: 50vw;
     margin-bottom: 20px;
@@ -211,9 +221,9 @@ body {
 
 /* 
  *reviews.html
-*/
+ */
 
-#createReview {
+ #createReview {
     position: fixed;
     top: 20vh;
     left: 10vw;
@@ -221,9 +231,9 @@ body {
 
 /* 
  *account.html
-*/
+ */
 
-#accountInfo {
+ #accountInfo {
     margin-top: 15vh;
     margin-left: 15vw;
     width: 50vw;
@@ -232,9 +242,9 @@ body {
 
 /* 
  *help.html
-*/
+ */
 
-#help {
+ #help {
     position: fixed;
     right: 20px;
     bottom: 20px;
