@@ -10,7 +10,7 @@
   <script src="code.js"></script>
   <title>Rate My Major</title>
 </head>
-<body>
+<body onload="showAccInfo();">
 
   <div id="navBar">
     <a class="navButton" id="homeButton" href="./home.html">Home</a>
@@ -19,9 +19,9 @@
   </div>
 
   <div id="accountInfo">
-    <div id="name">Username: </div><br/>
-    <div id="reviewList">Reviews: </div><br/>
-    <div id="commentList">Comments: </div><br/>
+    <div id="name">Username: </div>
+    <div id="reviewList"></div>
+    <div id="commentList">Comments: </div>
     <input type="button" id="logout" onclick="logout();" value="Log Out"/>
   </div>
 
