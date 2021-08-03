@@ -45,7 +45,7 @@ function searchMaj(){
 	$.ajax({
 		url: '/search/major/'+ $('#searchMajor').val(),
 		data: {},
-		method: 'GET',
+		method: 'POST',
 		success: (result)=>{
 			$("#reviewSection").html(result);
 		}
@@ -56,12 +56,35 @@ function searchUni(){
 	$.ajax({
 		url: '/search/university/'+ $('#searchUni').val(),
 		data: {},
-		method: 'GET',
+		method: 'POST',
 		success: (result)=>{
 			$("#reviewSection").html(result);
 		}
 	});
 } 
+
+function showComments(id){
+	$.ajax({  
+		url: '/show/comments/'+id,
+		data: {},
+		method: 'POST',
+		success: (result)=>{
+			$("#"+id+"cmts").html(result);
+			$("#"+id+"CmtButton").attr("disabled",true);
+		}
+	})
+}
+
+// function addReview(){
+// 	$.ajax({  
+// 		url: ,
+// 		data: {},
+// 		method: 'POST',
+// 		success: (result)=>{
+
+// 		}
+// 	})
+// }
 
 // function filterBy(){
 // 	$.ajax({
@@ -75,29 +98,17 @@ function searchUni(){
 // 	});
 // }
 
-
-
-// function addReview(){
-// 	$.ajax({  
-// 		url: ,
-// 		data: {},
-// 		method: 'POST',
-// 		success: (result)=>{
-
-// 		}
-// 	})
-// }
-
-// function addComment(){
-// 	$.ajax({
-// 		url: ,
-// 		data: {},
-// 		method: 'POST',
-// 		success: (result)=>{
-			
-// 		}
-// 	})
-// }
+function addComment(id){
+	$.ajax({
+		url: '/add/comment/'+id+'/'+$("#"+id+"CmtBox").val(),
+		data: {},
+		method: 'POST',
+		success: (result)=>{
+			$("#"+id+"CmtBox").val("");
+			showComments(id);
+		}
+	})
+}
 
 // function deleteReview(){
 // 	$.ajax({
@@ -105,7 +116,7 @@ function searchUni(){
 // 		data: {},
 // 		method: 'GET',
 // 		success: (result)=>{
-			
+
 // 		}
 // 	})
 // }
@@ -116,54 +127,62 @@ function searchUni(){
 // 		data: {},
 // 		method: 'GET',
 // 		success: (result)=>{
-			
+
 // 		}
 // 	})
 // }
 
-// function thumbsUpReview(){
-// 	$.ajax({
-// 		url: ,
-// 		data: {},
-// 		method: 'GET',
-// 		success: (result)=>{
-			
-// 		}
-// 	})
-// }
+function thumbsUpReview(id){
+	$.ajax({
+		url: '/thumbsup/review/'+id,
+		data: {},
+		method: 'GET',
+		success: (result)=>{
+			console.log("button pressed: "+"#"+id+"up")
+			$("#"+id+"up").html(result + " ");
+			$("#"+id+"UpButton").attr("disabled",true);
+		}
+	})
+}
 
-// function thumbsDownReview(){
-// 	$.ajax({
-// 		url: ,
-// 		data: {},
-// 		method: 'GET',
-// 		success: (result)=>{
-			
-// 		}
-// 	})
-// }
+function thumbsDownReview(id){
+	$.ajax({
+		url: '/thumbsdown/review/'+id,
+		data: {},
+		method: 'GET',
+		success: (result)=>{
+			console.log("button pressed: "+"#"+id+"down")
+			$("#"+id+"down").html(result + " ");
+			$("#"+id+"DownButton").attr("disabled",true);
+		}
+	})
+}
 
-// function thumbsUpComment(){
-// 	$.ajax({
-// 		url: ,
-// 		data: {},
-// 		method: 'GET',
-// 		success: (result)=>{
-			
-// 		}
-// 	})
-// }
+function thumbsUpComment(id){
+	$.ajax({
+		url: '/thumbsup/comment/'+id,
+		data: {},
+		method: 'GET',
+		success: (result)=>{
+			console.log("button pressed: "+"#"+id+"up")
+			$("#"+id+"up").html(result + " ");
+			$("#"+id+"UpButton").attr("disabled",true);
+		}
+	})
+}
 
-// function thumbsDownComment(){
-// 	$.ajax({
-// 		url: ,
-// 		data: {},
-// 		method: 'GET',
-// 		success: (result)=>{
-			
-// 		}
-// 	})
-// }
+function thumbsDownComment(id){
+	$.ajax({
+		url: '/thumbsdown/comment/'+id,
+		data: {},
+		method: 'GET',
+		success: (result)=>{
+			console.log("button pressed: "+"#"+id+"down")
+			$("#"+id+"down").html(result + " ");
+			$("#"+id+"DownButton").attr("disabled",true);
+		}
+	})
+}
 
 // function logout(){
 // 	$.ajax({

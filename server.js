@@ -210,9 +210,9 @@ var UserSchema = new Schema({
 	username: String,
 	password: String,
 	salt: String,
-	hash: String
-	// reviews: [{type: Schema.Types.ObjectId, ref: 'Review'}],
-	// comments: [{type: Schema.Types.ObjectId, ref: 'Comment'}]
+	hash: String,
+	reviews: [{type: Schema.Types.ObjectId, ref: 'Review'}],
+	comments: [{type: Schema.Types.ObjectId, ref: 'Comment'}]
 })
 
 var User = mongoose.model('User', UserSchema);
@@ -226,7 +226,9 @@ crypto.pbkdf2(pw1, salt, iterations, 64, 'sha512', (err,hash)=>{
 		username: user1,
 		password: pw1,
 		salt: salt,
-		hash: hash.toString('base64')
+		hash: hash.toString('base64'),
+		reviews: [],
+		comments: []
 	})
 	jesse.save((err)=>{if (err) console.log('error adding new user')});
 	console.log("User added")
@@ -317,9 +319,10 @@ app.post('/add/review/:major/:university/:review/:image',(req,res)=>{
 })
 
 // add comment - should be POST - GET for testing only
-app.post('/add/comment/:review/:comment',(req,res)=>{
+app.post('/add/comment/:reviewID/:comment',(req,res)=>{
+	console.log("Adding comment")
 	let user = req.cookies.login.username;
-	let rev = req.params.review;
+	let revID = req.params.reviewID;
 
 	// removed check if major/uni exists, because should always exist
 	// they will be in dropdown menu
@@ -336,15 +339,16 @@ app.post('/add/comment/:review/:comment',(req,res)=>{
 	console.log(comment);
 
 	// add comment to User collection
-	// User.find({username: user}).exec((error,results)=>{
-	// 	console.log("User: " + user)
-	// 	results[0].comments.push(comment);
-	// })
+	User.find({username: user}).exec((error,results)=>{
+		console.log("User: " + user)
+		results[0].comments.push(comment);
+	})
 
 	// add comment to Review collection
-	Review.find({review: rev}).exec((error,results)=>{
-		console.log("Review: " + rev);
+	Review.find({_id: revID}).exec((error,results)=>{
 		results[0].comments.push(comment);
+		results[0].save((err)=>{if(err)console.log('error saving review after adding new comment')})
+		console.log("Review: " + results[0]);
 	})
 
 	console.log("Comment added");
@@ -456,7 +460,9 @@ app.post('/add/user/:username/:password', (req,res)=>{
 					username: user,
 					password: pw,
 					salt: salt,
-					hash: hashString
+					hash: hashString,
+					reviews: [],
+					comments: []
 				})
 				newUser.save((err)=>{if (err) console.log('error adding new user')});
 				console.log("User added")
@@ -471,6 +477,7 @@ app.post('/add/user/:username/:password', (req,res)=>{
 // search & review section ============================================================
 
 app.post('/show/comments/:id', (req,res)=>{
+	console.log("Showing comments")
 	Review.find({_id: req.params.id}).exec((error,results)=>{
 		let html = "";
 		console.log(results[0].comments);
@@ -507,7 +514,8 @@ function makeHtml(rev,id){
 		html += "<div id="+id+"cmts></div>"
 	}
 	
-	let comments = rev.comments;
+	html += "<div id=addCmtRow><input id="+id+"PostButton class='reviewButtons' type='button' onclick=addComment('"+id+"'); value='Add comment'/>"
+	html += "<input id="+id+"CmtBox type=text></input></div>"
 
 	html += "</div>" // close reviewFrame
 	return html;
