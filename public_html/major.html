@@ -11,33 +11,35 @@
   <title>Rate My Major</title>
 </head>
 <body>
-
   <div id="navBar">
     <a class="navButton" id="homeButton" href="./home.html">Home</a>
     <a class="navButton" id="searchMajButton" href="major.html">Search By Major</a>
     <a class="navButton" id="accountButton" href="./account.html">Account</a>
   </div>
 
-  <div id="major">
-    <label for="searchMajor">Search By Major Keyword</label>
-    <input id="searchMajor" type="text">
-    <input type="button" id="searchMaj" onclick="searchMaj();" value="Search"/>
-  </div>
+  <div id="searchBar">
+    <div id="searchByMajor">
+      <label for="searchMajor">Search By Major Keyword</label>
+      <input id="searchMajor" type="text">
+      <input type="button" id="searchMaj" onclick="searchMaj();" value="Search"/>
+    </div>
+    <div id="searchByUniversity">
+      <label for="searchUni">Search For a Specific University</label>
+      <input id="searchUni" type="text">
+      <input type="button" id="searchUniversity" onclick="searchUni();" value="Search"/>
+    </div>
 
-  <a id="reviewButton" href="./reviews.html">Add a Review</a>
+    <a id="reviewButton" href="./reviews.html">Add a Review</a>
 
-  <div id="filter">
-    <select name="filterBy" id="filterBy" onclick="filterBy();">
-      <option value="static">Sort by:</option>
-      <option value="aToZ">Alphabetize Universities A to Z</option>
-      <option value="zToA">Alphabetize Universities Z to A</option>
-      <option value="mostLikes">High to Low Likes</option>
-      <option value="mostDislikes">High to Low Dislikes</option>
-    </select>
-    <br/><br/>
-    <label for="searchUni">Search For a Specific University</label><br/>
-    <input id="searchUni" type="text">
-    <input type="button" id="searchUniversity" onclick="searchUni();" value="Search"/>
+    <div id="filter">
+      <select name="filterBy" id="filterBy" onclick="filterBy();">
+        <option value="static">Sort by:</option>
+        <option value="aToZ">Alphabetize Universities A to Z</option>
+        <option value="zToA">Alphabetize Universities Z to A</option>
+        <option value="mostLikes">High to Low Likes</option>
+        <option value="mostDislikes">High to Low Dislikes</option>
+      </select>
+    </div>
   </div>
 
   <div id="reviewSection">Find reviews by searching by major or university and they will be displayed here!</div>
