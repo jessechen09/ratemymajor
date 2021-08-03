@@ -41,17 +41,27 @@ function addUser(){
 	})
 }
 
-// function searchMaj(){
-// 	$.ajax({
-// 		url: '/search/'+ $('#searchMajor').val(),
-// 		data: {},
-// 		method: 'GET',
-// 		success: (result)=>{
-// 			console.log('item added');
-// 			$("#reviewSection").html(result);
-// 		}
-// 	});
-// } 
+function searchMaj(){
+	$.ajax({
+		url: '/search/major/'+ $('#searchMajor').val(),
+		data: {},
+		method: 'GET',
+		success: (result)=>{
+			$("#reviewSection").html(result);
+		}
+	});
+} 
+
+function searchUni(){
+	$.ajax({
+		url: '/search/university/'+ $('#searchUni').val(),
+		data: {},
+		method: 'GET',
+		success: (result)=>{
+			$("#reviewSection").html(result);
+		}
+	});
+} 
 
 // function filterBy(){
 // 	$.ajax({
@@ -65,17 +75,7 @@ function addUser(){
 // 	});
 // }
 
-// function searchUni(){
-// 	$.ajax({
-// 		url: '/search/'+ $('#searchUniversity').val(),
-// 		data: {},
-// 		method: 'GET',
-// 		success: (result)=>{
-// 			console.log('item added');
-// 			$("#reviewSection").html(result);
-// 		}
-// 	});
-// } 
+
 
 // function addReview(){
 // 	$.ajax({  
