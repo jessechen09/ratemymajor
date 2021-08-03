@@ -117,32 +117,80 @@ var ReviewSchema = new Schema({
 	images: [String],
 	thumbsUp: Number,
 	thumbsDown: Number,
-	comments: [{type: Schema.Types.ObjectId, ref: 'Comment'}]
+	comments: [{type: Schema.Types.ObjectId, ref: 'Comment'}],
+	major: String,
+	university: String
 })
 
 var Review = mongoose.model('Review', ReviewSchema);
 
+// declare all characters
+const characters ='abcdefghijklmnopqrstuvwxyz ';
+
+function generateString(length) {
+    let result = ' ';
+    const charactersLength = characters.length;
+    for ( let i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        if(Math.random()<.1){
+        	result += " "
+        }
+    }
+
+    return result;
+}
+
 var r1 = new Review({
 	author: user2,
-	review: "review one",
+	review: generateString(200),
 	images: [],
 	thumbsUp: 199,
 	thumbsDown: 3,
-	comments: [cmt1]
+	comments: [cmt1],
+	major: "Computer Science",
+	university: "University of Arizona"
 })
 r1.save((err)=>{if(err)console.log('error saving r1')});
 cs.reviews.push(r1);
 
 var r2 = new Review({
 	author: user2,
-	review: "I don't think there are many jobs related to basekt weaving.",
+	review: generateString(253),
 	images: [],
 	thumbsUp: 33,
 	thumbsDown: 7,
-	comments: [cmt1]
+	comments: [cmt1],
+	major: "Basket Weaving",
+	university: "University of Arizona"
 })
 r2.save((err)=>{if(err)console.log('error saving r2')});
 bw.reviews.push(r2);
+
+var r3 = new Review({
+	author: user1,
+	review: generateString(224),
+	images: [],
+	thumbsUp: 43,
+	thumbsDown: 8,
+	comments: [],
+	major: "Computer Science",
+	university: "Arizona State University"
+})
+r3.save((err)=>{if(err)console.log('error saving r3')});
+cs.reviews.push(r3);
+
+var r4 = new Review({
+	author: user2,
+	review: generateString(253),
+	images: [],
+	thumbsUp: 41,
+	thumbsDown: 7,
+	comments: [],
+	major: "Computer Engineering",
+	university: "Arizona State University"
+})
+r4.save((err)=>{if(err)console.log('error saving r4')});
+ce.reviews.push(r4);
 
 // Users
 var UserSchema = new Schema({
@@ -412,242 +460,69 @@ app.post('/add/user/:username/:password', (req,res)=>{
 // majors
 app.get('/search/major/:keyword', (req,res)=>{
 	let keyword = req.params.keyword;
-	Major.find({major: {$regex:new RegExp(keyword, "ig")}}).exec((error,results)=>{
-		console.log("Majors with the substring "+"'"+keyword+"' in their major names:")
+	Review.find({major: {$regex:new RegExp(keyword, "ig")}}).exec((error,results)=>{
+
+		// sorts A-Z order
+		results.sort((a,b)=>{
+			let nameA = a.major.toLowerCase();
+			let nameB = b.major.toLowerCase();
+			if (nameA < nameB) {
+				return -1;
+			}
+			if (nameA > nameB) {
+				return 1;
+			}
+
+			// names must be equal
+			return 0;
+		})
+
+		console.log("Reviews with majors with the substring "+"'"+keyword+"' in their major names:")
 		console.log(results)
 
-		res.send(results);
+		let html = "";
+
+		for(i=0; i<results.length; i++){
+			let rev = results[i]
+			html += "<div class='reviewFrame'>"
+			html += "<div>Major: "+rev.major+"</div>";
+			html += "<div>University: "+rev.university+"</div>";
+			html += "<div class='reviewText'> Review: "+rev.review+"</div>";
+			html += "<input class='reviewButtons' type='button' onclick='thumbsUpReview(id);' value='Thumbs Up'/>"
+			html += "<input class='reviewButtons' type='button' onclick='thumbsDownReview(id);' value='Thumbs Down'/>"
+			html += "<input class='reviewButtons' type='button' onclick='addComment();' value='Comment'/>"
+			html += "</div>" // close reviewFrame
+			
+		}
+
+		res.send(html);
 	});
 })
 
-// majors
+// universities
 app.get('/search/university/:keyword', (req,res)=>{
 	let keyword = req.params.keyword;
 	University.find({university: {$regex:new RegExp(keyword, "ig")}}).exec((error,results)=>{
+		
+		// // sorts A-Z order
+		// results.sort((a,b)=>{
+		// 	let nameA = a.university.toLowerCase();
+		// 	let nameB = b.university.toLowerCase();
+		// 	if (nameA < nameB) {
+		// 		return -1;
+		// 	}
+		// 	if (nameA > nameB) {
+		// 		return 1;
+		// 	}
+
+		// 	// names must be equal
+		// 	return 0;
+		// })
+		
 		console.log("Universities with the substring "+"'"+keyword+"' in their names:")
 		console.log(results)
-
 		res.send(results);
 	});
 })
-// PA10 - do not reuse ==============================================================================
-// search listings
-// app.get('/search/listings/:keyword', (req,res)=>{
-// 	let keyword = req.params.keyword;
-// 	Item.find({description: {$regex:keyword}}).exec((error,results)=>{
-// 		let html = "<h1 id='rightHeader'>Search results</h1> <div id='items'>"
-
-// 		if(results.length==0){
-// 			html += "<p>No listings found for given keyword!</p></div>";
-// 			res.send(html);
-
-// 		} else {
-
-// 			console.log("Items with the substring "+"'"+keyword+"' in their name:")
-// 			console.log(results)
-// 		// add html stuff to show listings
-		
-// 			// add html stuff to show listings
-// 			for(i=0;i<results.length;i++){
-// 				let item = results[i];
-// 				let open = "<div class='item'>";
-// 				let title = "<div><b>" + item.title + "</b></div><br>";
-// 				let img = "<div>" + item.image + "</div><br>";
-// 				let desc = "<div>" + item.description + "</div><br>";
-// 				let price = "<div>$" + item.price + "</div><br>";
-// 				let stat = "<div>" + item.stat + "</div>";
-// 				let close = "</div><br><br>";
-// 				html += open+title+img+desc+price+stat+close;
-// 			}
-// 			html += "</div>";
-// 			res.send(html);
-// 		}
-// 	});
-// })
-
-// // view listings
-// app.get('/view/listings/', (req,res)=>{
-// 	Item.find().exec((error,results)=>{
-// 		console.log(results);
-// 		let html = "<h1 id='rightHeader'>Listings</h1> <div id='items'>"
-// 		if(results.length==0){
-// 			html += "<p>No listings!</p></div>";
-// 			res.send(html);
-// 		} else {
-// 			for(i=0;i<results.length;i++){
-// 				let item = results[i];
-// 				let open = "<div class='item'>";
-// 				let title = "<div><b>" + item.title + "</b></div><br>";
-// 				let img = "<div>" + item.image + "</div><br>";
-// 				let desc = "<div>" + item.description + "</div><br>";
-// 				let price = "<div>$" + item.price + "</div><br>";
-// 				let buy;
-// 				if(item.stat=='SALE'){
-// 					buy = "<input type='button' onclick=buyItem('"+item.title+"'); value='Buy now!'><br>"
-// 				} else {
-// 					buy = "<div> Item has been sold </div>";
-// 				}
-// 				let close = "</div><br><br>";
-// 				html += open+title+img+desc+price+buy+close;
-// 			}
-// 			html += "</div>";
-// 			res.send(html);
-// 		}
-// 	});
-// })
-
-// // buy item
-// app.get('/buy/item/:item', (req,res)=>{
-// 	let item = req.params.item;
-// 	let user = req.cookies.login.username;
-// 	console.log(item);
-// 	User.find({username: user}).exec((error,results)=>{
-// 		user = results[0];
-// 		console.log("results: " + user.purchases);
-
-// 		Item.find({title: item}).exec((error,results)=>{
-// 			let item = results[0];
-// 			item.stat = "SOLD";
-// 			item.save((err)=>{if (err) console.log('error saving item')});
-// 			console.log("results: " + item);
-// 			user.purchases.push(item);
-// 			console.log(user.purchases)
-// 			user.save((err)=>{if (err) console.log('error saving user')});
-// 		});
-// 	});
-// })
-
-// // view purchases
-// app.get('/view/purchases/', (req,res)=>{
-// 	let user = req.cookies.login.username;
-// 	User.find({username: user}).exec((error,results)=>{
-// 		Item.find({_id: results[0].purchases}).exec((error,results)=>{
-// 			let html = "<h1 id='rightHeader'>Purchases</h1> <div id='items'>"
-// 			console.log(results);
-// 			if(results.length==0){
-// 				html += "<p>No purchases!</p></div>";
-// 				res.send(html);
-// 			} else {
-
-// 				for(i=0;i<results.length;i++){
-// 					let item = results[i];
-// 					let open = "<div class='item'>"
-// 					let title = "<div><b>" + item.title + "</b></div><br>";
-// 					let img = "<div>" + item.image + "</div><br>";
-// 					let desc = "<div>" + item.description + "</div><br>";
-// 					let price = "<div>" + item.price + "</div><br>";
-// 					let stat = "<div>" + item.stat + "</div>";
-// 					let close ="</div><br><br>";
-// 					html += open+title+img+desc+price+stat+close;
-// 				}
-// 				html += "</div>";
-// 				res.send(html);
-// 			}
-// 		});
-// 	});
-// })
-
-// // add item, create listing
-// app.post('/add/item/:title/:desc/:img/:price/:stat', (req,res)=>{
-// 	let user = req.cookies.login.username;
-// 	User.find({username: user}).exec((error,results)=>{
-// 		let newItem = new Item({
-// 			title: req.params.title, 
-// 			description: req.params.desc,
-// 			image: req.params.img,
-// 			price: req.params.price,
-// 			stat: req.params.stat
-// 		})
-// 		newItem.save((err)=>{if (err) console.log('error adding new item')});
-// 		results[0].listings.push(newItem);
-// 		results[0].save((err)=>{if (err) console.log('error adding new listing')});
-// 		console.log("Item added to user's listings")
-// 		console.log(results[0].listings)
-// 	})
-// 	res.send("");
-// })
-
-
-// PA9 ==================================================================
-// app.get('/get/users', (req,res)=>{
-// 	User.find().exec((error,results)=>{
-// 		console.log("Users:");
-// 		console.log(results);
-// 		res.send('<pre>' + JSON.stringify(results, null, 2) +  '</pre>');
-// 	});
-// })
-
-// app.get('/get/items', (req,res)=>{
-// 	Item.find().exec((error,results)=>{
-// 		console.log("Items:")
-// 		console.log(results);
-// 		res.send('<pre>' + JSON.stringify(results, null, 2) +  '</pre>');
-// 	});
-// })
-
-// app.get('/get/listings/:username', (req,res)=>{
-// 	let user = req.params.username;
-// 	User.find({username: user}).exec((error,results)=>{
-
-// 		Item.find({_id: results[0].listings}).exec((error,results)=>{
-// 			res.send('<pre>' + JSON.stringify(results, null, 2) +  '</pre>');
-// 			console.log("Listings for "+user+":")
-// 			console.log(results);
-// 		});
-// 	});
-// })
-
-// app.get('/get/purchases/:username', (req,res)=>{
-// 	let user = req.params.username;
-// 	User.find({username: user}).exec((error,results)=>{
-
-// 		Item.find({_id: results[0].purchases}).exec((error,results)=>{
-// 			res.send('<pre>' + JSON.stringify(results, null, 2) +  '</pre>');
-// 			console.log("Purchases for "+user+":")
-// 			console.log(results);
-// 		});
-// 	});
-// })
-
-// app.get('/search/users/:keyword', (req,res)=>{
-// 	let keyword = req.params.keyword;
-// 	User.find({username: {$regex:keyword}}).exec((error,results)=>{
-// 		console.log("Users with the substring "+"'"+keyword+"' in their username:")
-// 		console.log(results)
-// 		res.send('<pre>' + JSON.stringify(results, null, 2) +  '</pre>');
-// 	});
-// })
-
-// app.get('/search/items/:keyword', (req,res)=>{
-// 	let keyword = req.params.keyword;
-// 	Item.find({description: {$regex:keyword}}).exec((error,results)=>{
-// 		console.log("Items with the substring "+"'"+keyword+"' in their name:")
-// 		console.log(results)
-// 		res.send('<pre>' + JSON.stringify(results, null, 2) +  '</pre>');
-// 	});
-// })
-
-
-
-// app.post('/add/item/:username/:title/:desc/:img/:price/:stat', (req,res)=>{
-
-// 	User.find({username: req.params.username}).exec((error,results)=>{
-// 		let newItem = new Item({
-// 			title: req.params.title, 
-// 			description: req.params.desc,
-// 			image: req.params.img,
-// 			price: req.params.price,
-// 			stat: req.params.stat
-// 		})
-// 		newItem.save((err)=>{if (err) console.log('error adding new item')});
-// 		results[0].listings.push(newItem);
-// 		results[0].save((err)=>{if (err) console.log('error adding new listing')});
-// 		console.log("Item added to user's listings")
-// 		console.log(results[0].listings)
-// 	})
-// 	res.send("");
-// })
 
 app.listen(port, ()=>console.log(`App listening at http://localhost:${port}`));
-
-
