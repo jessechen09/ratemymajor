@@ -63,6 +63,7 @@ function searchUni(){
 	});
 } 
 
+
 function showComments(id){
 	$.ajax({  
 		url: '/show/comments/'+id,
@@ -71,6 +72,45 @@ function showComments(id){
 		success: (result)=>{
 			$("#"+id+"cmts").html(result);
 			$("#"+id+"CmtButton").attr("disabled",true);
+		}
+	})
+}
+
+function showAccInfo(){
+	showUsername();
+	showReviewsAcc();
+	showCommentsAcc();
+}
+
+function showUsername(){
+	$.ajax({  
+		url: '/show/account/username',
+		data: {},
+		method: 'POST',
+		success: (result)=>{
+			$("#name").html(result);
+		}
+	})
+}
+
+function showReviewsAcc(){
+	$.ajax({  
+		url: '/show/account/reviews',
+		data: {},
+		method: 'POST',
+		success: (result)=>{
+			$("#reviewList").html(result);
+		}
+	})
+}
+
+function showCommentsAcc(){
+	$.ajax({  
+		url: '/show/account/comments',
+		data: {},
+		method: 'POST',
+		success: (result)=>{
+			$("#commentList").html(result);
 		}
 	})
 }

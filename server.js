@@ -141,7 +141,7 @@ function generateString(length) {
 }
 
 var r1 = new Review({
-	author: user2,
+	author: user1,
 	review: generateString(200),
 	images: [],
 	thumbsUp: 199,
@@ -227,8 +227,8 @@ crypto.pbkdf2(pw1, salt, iterations, 64, 'sha512', (err,hash)=>{
 		password: pw1,
 		salt: salt,
 		hash: hash.toString('base64'),
-		reviews: [],
-		comments: []
+		reviews: [r1, r3],
+		comments: [cmt1, cmt2]
 	})
 	jesse.save((err)=>{if (err) console.log('error adding new user')});
 	console.log("User added")
@@ -471,6 +471,60 @@ app.post('/add/user/:username/:password', (req,res)=>{
 				res.send("");
 			})
 		}
+	})
+})
+
+// show username
+app.post('/show/account/username', (req,res)=>{
+	let user = req.cookies.login.username;
+	res.send("<h1>"+user+"</h1>");
+})
+
+// show reviews
+app.post('/show/account/reviews', (req,res)=>{
+	let user = req.cookies.login.username;
+	User.find({username: user}).exec((error,results)=>{
+		let reviews = results[0].reviews;
+
+		Review.find({_id: reviews}).exec((error,results)=>{
+			if(results.length>0){
+				let html = "<h2>Reviews</h2>";
+				for(i=0;i<results.length;i++){
+					let rev = results[i];
+					html += "<div class='reviewFrame'>"
+					html += "<div><b>Major:</b> "+rev.major+", ";
+					html += "<b>University:</b> "+rev.university+"</div><br>";
+					html += "<div class='reviewText'> <b>Review:</b> "+rev.review+"</div><br>";
+					html += "<b> Thumbs up:</b> "+rev.thumbsUp;
+					html += "<b>, Thumbs down:</b> "+rev.thumbsDown;
+				html += "</div>" // close reviewFrame
+			}
+			res.send(html);
+		}
+	})
+	})
+})
+
+// show comments
+app.post('/show/account/comments', (req,res)=>{
+	let user = req.cookies.login.username;
+	User.find({username: user}).exec((error,results)=>{
+		let comments = results[0].comments;
+
+		Comment.find({_id: comments}).exec((error,results)=>{
+			if(results.length>0){
+				let html = "<h2>Comments</h2>";
+				for(i=0;i<results.length;i++){
+					let rev = results[i];
+					html += "<div class='reviewFrame'>"
+					html += "<div class='reviewText'> <b>Review:</b> "+rev.comment+"</div><br>";
+					html += "<b>Thumbs up:</b> "+rev.thumbsUp;
+					html += ", <b>Thumbs down:</b> "+rev.thumbsDown;
+				html += "</div>" // close reviewFrame
+			}
+			res.send(html);
+		}
+	})
 	})
 })
 
