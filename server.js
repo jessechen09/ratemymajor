@@ -485,14 +485,13 @@ app.get('/search/major/:keyword', (req,res)=>{
 		for(i=0; i<results.length; i++){
 			let rev = results[i]
 			html += "<div class='reviewFrame'>"
-			html += "<div>Major: "+rev.major+"</div>";
-			html += "<div>University: "+rev.university+"</div>";
-			html += "<div class='reviewText'> Review: "+rev.review+"</div>";
+			html += "<div><b>Major:</b> "+rev.major+", ";
+			html += "<b>University:</b> "+rev.university+"</div><br>";
+			html += "<div class='reviewText'> <b>Review:</b> "+rev.review+"</div><br>";
 			html += "<input class='reviewButtons' type='button' onclick='thumbsUpReview(id);' value='Thumbs Up'/>"
 			html += "<input class='reviewButtons' type='button' onclick='thumbsDownReview(id);' value='Thumbs Down'/>"
 			html += "<input class='reviewButtons' type='button' onclick='addComment();' value='Comment'/>"
 			html += "</div>" // close reviewFrame
-			
 		}
 
 		res.send(html);
