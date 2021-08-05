@@ -448,6 +448,15 @@ app.get('/login/:username/:password',(req,res)=>{
 	})
 })
 
+// logout
+app.get('/logout/:user', (req,res) => {
+	let user = req.params.user;
+	User.find({username:user}).exec((error, results) => {
+		delete sessionKeys[user][0];
+		res.send("pass");
+	})
+})
+
 // create account
 app.post('/add/user/:username/:password', (req,res)=>{
 	let user = req.params.username;
@@ -586,25 +595,80 @@ function makeHtml(rev,id){
 	return html;
 }
 
-function processSearch(results){
+function processSearch(results, sortOption){
 	// sorts A-Z order
-	results.sort((a,b)=>{
-		let nameA = a.major.toLowerCase();
-		let nameB = b.major.toLowerCase();
-		if (nameA < nameB) {
-			return -1;
+	let revArr = [];
+	revArr.insert = function ( index, item ) {
+		this.splice( index, 0, item );
+	};
+	if (sortOption == 'aToZ') {
+		for (review in results) {
+			if (revArr.length == 0) {
+				revArr.push(review);
+			}
+			for (rev in revArr) {
+				if (results[review].major < rev.major) {
+					let index = revArr.indefOf(rev.major);
+					revArr.insert(index, results[review].major);
+				}
+			}
 		}
-		if (nameA > nameB) {
-			return 1;
+	} else if (sortOption == 'zToA') {
+		for (review in results) {
+			if (revArr.length == 0) {
+				revArr.push(review);
+			}
+			for (rev in revArr) {
+				if (revArr.hasNext()) {
+					if (revArr.next.major < results[review].major) {
+						let index = revArr.indefOf(rev.major);
+						revArr.insert(index, results[review].major);
+					}
+				} else {
+					revArr.push(review);
+				}
+			}
 		}
-			// names must be equal
-			return 0;
-		})
+	} else if (sortOption == 'mostLikes') {
+		for (review in results) {
+			if (revArr.length == 0) {
+				revArr.push(review);
+			}
+			for (rev in revArr) {
+				if (revArr.hasNext()) {
+					if (revArr.thumbsUp < results[review].thumbsUp) {
+						let index = revArr.indefOf(rev.major);
+						revArr.insert(index, results[review].major);
+					}
+				} else {
+					revArr.push(review);
+				}
+			}
+		}
+	} else if (sortOption == 'mostDisikes') {
+		for (review in results) {
+			if (revArr.length == 0) {
+				revArr.push(review);
+			}
+			for (rev in revArr) {
+				if (revArr.hasNext()) {
+					if (revArr.thumbsDown < results[review].thumbsDown) {
+						let index = revArr.indefOf(rev.major);
+						revArr.insert(index, results[review].major);
+					}
+				} else {
+					revArr.push(review);
+				}
+			}
+		}
+	}
+
+	console.log(revArr);
 
 	let html = "";
 
-	for(i=0; i<results.length; i++){
-		let rev = results[i];
+	for(i=0; i<revArr.length; i++){
+		let rev = revArr[i];
 		let id = rev._id;
 		html += makeHtml(rev,id);
 	}
@@ -612,94 +676,24 @@ function processSearch(results){
 }
 
 // majors
-app.post('/search/major/:keyword/:filter', (req,res)=>{
+app.post('/search/major/:keyword/:sort', (req,res)=>{
 	let keyword = req.params.keyword;
-	let filter = req.params.filter;
-	let revArr = [];
-	revArr.insert = function ( index, item ) {
-		this.splice( index, 0, item );
-	};
+	let sortOption = req.params.sort;
 	Review.find({major: {$regex:new RegExp(keyword, "ig")}}).exec((error,results)=>{
 		console.log("Reviews with majors with the substring "+"'"+keyword+"' in their major names:")
 		console.log(results)
-		if (filter == 'static') {
-			res.send(results);
-		} else if (filter == 'aToZ') {
-			for (review in results) {
-				if (revArr.length == 0) {
-					revArr.push(review);
-				}
-				for (rev in revArr) {
-					if (results[review].major < rev.major) {
-						let index = revArr.indefOf(rev.major);
-						revArr.insert(index, results[review].major);
-					}
-				}
-			}
-			res.send(revArr);
-		} else if (filter == 'zToA') {
-			for (review in results) {
-				if (revArr.length == 0) {
-					revArr.push(review);
-				}
-				for (rev in revArr) {
-					if (revArr.hasNext()) {
-						if (revArr.next.major < results[review].major) {
-							let index = revArr.indefOf(rev.major);
-							revArr.insert(index, results[review].major);
-						}
-					} else {
-						revArr.push(review);
-					}
-				}
-			}
-			res.send(revArr);
-		} else if (filter == 'mostLikes') {
-			for (review in results) {
-				if (revArr.length == 0) {
-					revArr.push(review);
-				}
-				for (rev in revArr) {
-					if (revArr.hasNext()) {
-						if (revArr.thumbsUp < results[review].thumbsUp) {
-							let index = revArr.indefOf(rev.major);
-							revArr.insert(index, results[review].major);
-						}
-					} else {
-						revArr.push(review);
-					}
-				}
-			}
-			res.send(revArr);
-		} else if (filter == 'mostDisikes') {
-			for (review in results) {
-				if (revArr.length == 0) {
-					revArr.push(review);
-				}
-				for (rev in revArr) {
-					if (revArr.hasNext()) {
-						if (revArr.thumbsDown < results[review].thumbsDown) {
-							let index = revArr.indefOf(rev.major);
-							revArr.insert(index, results[review].major);
-						}
-					} else {
-						revArr.push(review);
-					}
-				}
-			}
-			res.send(revArr);
-		}
+		res.send(processSearch(results, sortOption));
 	});
 })
 
 // universities
-app.post('/search/university/:keyword/:filter', (req,res)=>{
+app.post('/search/university/:keyword/:sort', (req,res)=>{
 	let keyword = req.params.keyword;
-	let filter = req.params.filter;
+	let sortOption = req.params.sort;
 	Review.find({university: {$regex:new RegExp(keyword, "ig")}}).exec((error,results)=>{
 		console.log("Reviews with universities with the substring "+"'"+keyword+"' in their names:")
 		console.log(results)
-		res.send(processSearch(results));
+		res.send(processSearch(results, sortOption));
 	});
 })
 

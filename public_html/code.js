@@ -43,7 +43,7 @@ function addUser(){
 
 function searchMaj(){
 	$.ajax({
-		url: '/search/major/'+ $('#searchMajor').val() + '/' + $('#filterBy').val(),
+		url: '/search/major/'+ $('#searchMajor').val() + '/' + $('#sortBy').val(),
 		data: {},
 		method: 'POST',
 		success: (result)=>{
@@ -54,7 +54,7 @@ function searchMaj(){
 
 function searchUni(){
 	$.ajax({
-		url: '/search/university/'+ $('#searchUni').val() + '/' + $('#filterBy').val(),
+		url: '/search/university/'+ $('#searchUni').val() + '/' + $('#sortBy').val(),
 		data: {},
 		method: 'POST',
 		success: (result)=>{
@@ -128,18 +128,6 @@ function addReview(){
 		success: (result)=>{
 		}
 	})
-}
-
-function filterBy(){
-	$.ajax({
-		url: '/filter/' + $('#filterBy').val(),
-		data: {},
-		method: 'GET',
-		success: (result)=>{
-			console.log('view listing success');
-			$("#reviewSection").html(result);
-		}
-	});
 }
 
 function addComment(id){
@@ -228,19 +216,22 @@ function thumbsDownComment(id){
 	})
 }
 
-// function logout(){
-// 	$.ajax({
-// 		url: '/login/'+$('#luser').val()+'/'+$('#lpassword').val(),
-// 		data: {},
-// 		method: 'GET',
-// 		success: (result)=>{
-// 			console.log('user login attempt received: '+$('#luser').val()+', '+$('#passwordLog').val());
-// 			if(result=='pass'){
-// 				console.log('user login successful')
-// 				window.location='/home.html';//?username='+$('#usernameLog').val()+'&password='+$('#passwordLog').val();
-// 			} else {
-// 				alert("Login failed. Please try again.");
-// 			}
-// 		}
-// 	});
-// } 
+function logout(){
+	let cookie = document.cookie;
+    cookie = cookie.split('=');
+    let parse = JSON.parse(decodeURIComponent(cookie[1]).replace("j:", ""));
+	$.ajax({
+		url: '/logout/'+ parse.username,
+		data: {},
+		method: 'GET',
+		success: (result)=>{
+			console.log('user logout attempt received: '+ parse.username +', '+$('#passwordLog').val());
+			if(result=='pass'){
+				console.log('user logout successful')
+				window.location='/index.html';//?username='+$('#usernameLog').val()+'&password='+$('#passwordLog').val();
+			} else {
+				alert("Logout failed. Please try again.");
+			}
+		}
+	});
+} 
