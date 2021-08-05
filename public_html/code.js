@@ -43,7 +43,7 @@ function addUser(){
 
 function searchMaj(){
 	$.ajax({
-		url: '/search/major/'+ $('#searchMajor').val(),
+		url: '/search/major/'+ $('#searchMajor').val() + '/' + $('#filterBy').val(),
 		data: {},
 		method: 'POST',
 		success: (result)=>{
@@ -54,7 +54,7 @@ function searchMaj(){
 
 function searchUni(){
 	$.ajax({
-		url: '/search/university/'+ $('#searchUni').val(),
+		url: '/search/university/'+ $('#searchUni').val() + '/' + $('#filterBy').val(),
 		data: {},
 		method: 'POST',
 		success: (result)=>{
@@ -115,28 +115,32 @@ function showCommentsAcc(){
 	})
 }
 
-// function addReview(){
-// 	$.ajax({  
-// 		url: ,
-// 		data: {},
-// 		method: 'POST',
-// 		success: (result)=>{
+function addReview(){
+	let chMaj = $('#chooseMaj').val();
+	let chUni = $('#chooseUni').val();
+	let info = $('#review').val();
+	let rating = $('#rating').val();
+	let image = $('#image').val();
+	$.ajax({  
+		url: '/add/review/' + chMaj + '/' + chUni + '/' + info + '/' + image,
+		data: {},
+		method: 'POST',
+		success: (result)=>{
+		}
+	})
+}
 
-// 		}
-// 	})
-// }
-
-// function filterBy(){
-// 	$.ajax({
-// 		url: '/filter/' + $('#filterBy').val(),
-// 		data: {},
-// 		method: 'GET',
-// 		success: (result)=>{
-// 			console.log('view listing success');
-// 			$("#reviewSection").html(result);
-// 		}
-// 	});
-// }
+function filterBy(){
+	$.ajax({
+		url: '/filter/' + $('#filterBy').val(),
+		data: {},
+		method: 'GET',
+		success: (result)=>{
+			console.log('view listing success');
+			$("#reviewSection").html(result);
+		}
+	});
+}
 
 function addComment(id){
 	$.ajax({
