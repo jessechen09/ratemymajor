@@ -126,6 +126,7 @@ function addReview(){
 		data: {},
 		method: 'POST',
 		success: (result)=>{
+			window.location() = '/majors.html';
 		}
 	})
 }

@@ -55,6 +55,48 @@ var bw = new Major({
 })
 bw.save((err)=>{if(err)console.log('error saving bw')});
 
+var ac = new Major({
+	major: "Accounting",
+	reviews: []
+})
+ac.save((err)=>{if(err)console.log('error saving ac')});
+
+var ae = new Major({
+	major: "Aerospace Engineering",
+	reviews: []
+})
+ae.save((err)=>{if(err)console.log('error saving ae')});
+
+var bu = new Major({
+	major: "Business",
+	reviews: []
+})
+bu.save((err)=>{if(err)console.log('error saving bu')});
+
+var co = new Major({
+	major: "Communication",
+	reviews: []
+})
+co.save((err)=>{if(err)console.log('error saving co')});
+
+var ph = new Major({
+	major: "Public Health",
+	reviews: []
+})
+ph.save((err)=>{if(err)console.log('error saving ph')});
+
+var pr = new Major({
+	major: "Public Relations",
+	reviews: []
+})
+pr.save((err)=>{if(err)console.log('error saving pr')});
+
+var zoo = new Major({
+	major: "Zoology",
+	reviews: []
+})
+zoo.save((err)=>{if(err)console.log('error saving zoo')});
+
 // University
 var UniversitySchema = new Schema({
 	university: String,
@@ -80,6 +122,48 @@ var uIllinois = new University({
 	reviews: [] 
 })
 uIllinois.save((err)=>{if(err)console.log('error saving uIllinois')});
+
+var harvard = new University({
+	university: 'Harvard University',
+	reviews: [] 
+})
+harvard.save((err)=>{if(err)console.log('error saving harvard')});
+
+var mit = new University({
+	university: 'Massachusetts Institue of Technology',
+	reviews: [] 
+})
+mit.save((err)=>{if(err)console.log('error saving mit')});
+
+var princeton = new University({
+	university: 'Princeton University',
+	reviews: [] 
+})
+princeton.save((err)=>{if(err)console.log('error saving princeton')});
+
+var stanford = new University({
+	university: 'Stanford University',
+	reviews: [] 
+})
+stanford.save((err)=>{if(err)console.log('error saving stanford')});
+
+var uAlabama = new University({
+	university: 'University of Alabama',
+	reviews: [] 
+})
+uAlabama.save((err)=>{if(err)console.log('error saving uAlabama')});
+
+var ucBerkeley = new University({
+	university: 'University of California -- Berkeley',
+	reviews: [] 
+})
+ucBerkeley.save((err)=>{if(err)console.log('error saving ucBerkeley')});
+
+var uWashington = new University({
+	university: 'University of Washington',
+	reviews: [] 
+})
+uWashington.save((err)=>{if(err)console.log('error saving uWashington')});
 
 // Comments
 var CommentSchema = new Schema({
@@ -276,7 +360,7 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 // add review - should be POST - GET for testing only
 app.post('/add/review/:major/:university/:review/:image',(req,res)=>{
-	let user = 'asdf';//req.cookies.login.username;
+	let user = req.cookies.login.username;
 	let maj = req.params.major;
 	let uni = req.params.university;
 
@@ -308,6 +392,9 @@ app.post('/add/review/:major/:university/:review/:image',(req,res)=>{
 	// add review to Major collection
 	Major.find({major: maj}).exec((error,results)=>{
 		console.log("Major: " + maj);
+		console.log(results);
+		console.log(results[0]);
+		console.log(results[0].reviews);
 		results[0].reviews.push(review);
 		results[0].save((err)=>{if(err)console.log('error saving major after adding new review')})
 	})
@@ -597,78 +684,64 @@ function makeHtml(rev,id){
 
 function processSearch(results, sortOption){
 	// sorts A-Z order
-	let revArr = [];
-	revArr.insert = function ( index, item ) {
-		this.splice( index, 0, item );
-	};
 	if (sortOption == 'aToZ') {
-		for (review in results) {
-			if (revArr.length == 0) {
-				revArr.push(review);
-			}
-			for (rev in revArr) {
-				if (results[review].major < rev.major) {
-					let index = revArr.indefOf(rev.major);
-					revArr.insert(index, results[review].major);
-				}
-			}
+		results.sort((a,b)=>{
+		let nameA = a.major.toLowerCase();
+		let nameB = b.major.toLowerCase();
+		if (nameA < nameB) {
+			return -1;
 		}
+		if (nameA > nameB) {
+			return 1;
+		}
+			// names must be equal
+			return 0;
+		})
 	} else if (sortOption == 'zToA') {
-		for (review in results) {
-			if (revArr.length == 0) {
-				revArr.push(review);
+		results.sort((a,b)=>{
+			let nameA = a.major.toLowerCase();
+			let nameB = b.major.toLowerCase();
+			if (nameA > nameB) {
+				return -1;
 			}
-			for (rev in revArr) {
-				if (revArr.hasNext()) {
-					if (revArr.next.major < results[review].major) {
-						let index = revArr.indefOf(rev.major);
-						revArr.insert(index, results[review].major);
-					}
-				} else {
-					revArr.push(review);
-				}
+			if (nameA < nameB) {
+				return 1;
 			}
-		}
+				// names must be equal
+				return 0;
+			})
 	} else if (sortOption == 'mostLikes') {
-		for (review in results) {
-			if (revArr.length == 0) {
-				revArr.push(review);
+		results.sort((a,b)=>{
+			let nameA = a.thumbsUp;
+			let nameB = b.thumbsUp;
+			if (nameA > nameB) {
+				return -1;
 			}
-			for (rev in revArr) {
-				if (revArr.hasNext()) {
-					if (revArr.thumbsUp < results[review].thumbsUp) {
-						let index = revArr.indefOf(rev.major);
-						revArr.insert(index, results[review].major);
-					}
-				} else {
-					revArr.push(review);
-				}
+			if (nameA < nameB) {
+				return 1;
 			}
-		}
+				// names must be equal
+				return 0;
+			})
 	} else if (sortOption == 'mostDisikes') {
-		for (review in results) {
-			if (revArr.length == 0) {
-				revArr.push(review);
+		results.sort((a,b)=>{
+			let nameA = a.thumbsDown;
+			let nameB = b.thumbsDown;
+			if (nameA > nameB) {
+				return -1;
 			}
-			for (rev in revArr) {
-				if (revArr.hasNext()) {
-					if (revArr.thumbsDown < results[review].thumbsDown) {
-						let index = revArr.indefOf(rev.major);
-						revArr.insert(index, results[review].major);
-					}
-				} else {
-					revArr.push(review);
-				}
+			if (nameA < nameB) {
+				return 1;
 			}
-		}
+				// names must be equal
+				return 0;
+			})
 	}
-
-	console.log(revArr);
 
 	let html = "";
 
-	for(i=0; i<revArr.length; i++){
-		let rev = revArr[i];
+	for(i=0; i<results.length; i++){
+		let rev = results[i];
 		let id = rev._id;
 		html += makeHtml(rev,id);
 	}
