@@ -445,7 +445,7 @@ app.post('/add/comment/:reviewID/:comment',(req,res)=>{
 		console.log("Review: " + results[0]);
 	})
 
-	console.log("Comment added");
+	console.log("Comment added to review of ID: "+revID);
 	res.send("");
 })
 
@@ -672,9 +672,9 @@ function makeHtml(rev,id){
 	html += "<input id="+id+"DownButton class='reviewButtons' type='button' onclick=thumbsDownReview('"+id+"'); value='Thumbs Down'/>"
 	if(rev.comments.length > 0){
 		html += "<input class='reviewButtons' id="+id+"CmtButton type='button' onclick=showComments('"+id+"'); value='Show comments'/>"
-		html += "<div id="+id+"cmts></div>"
 	}
 	
+	html += "<div id="+id+"cmts></div>"
 	html += "<div id=addCmtRow><input id="+id+"PostButton class='reviewButtons' type='button' onclick=addComment('"+id+"'); value='Add comment'/>"
 	html += "<input id="+id+"CmtBox type=text></input></div>"
 
@@ -682,8 +682,11 @@ function makeHtml(rev,id){
 	return html;
 }
 
+function sort(){
+
+}
+
 function processSearch(results, sortOption){
-	// sorts A-Z order
 	if (sortOption == 'aToZ') {
 		results.sort((a,b)=>{
 		let nameA = a.major.toLowerCase();

@@ -63,6 +63,10 @@ function searchUni(){
 	});
 } 
 
+var currentId = "";
+setInterval(()=>{
+	showComments(currentId)
+},1);
 
 function showComments(id){
 	$.ajax({  
@@ -70,8 +74,21 @@ function showComments(id){
 		data: {},
 		method: 'POST',
 		success: (result)=>{
+			currentId=id;
 			$("#"+id+"cmts").html(result);
 			$("#"+id+"CmtButton").attr("disabled",true);
+		}
+	})
+}
+
+function addComment(id){
+	$.ajax({
+		url: '/add/comment/'+id+'/'+$("#"+id+"CmtBox").val(),
+		data: {},
+		method: 'POST',
+		success: (result)=>{
+			$("#"+id+"CmtBox").val("");
+			showComments(id);
 		}
 	})
 }
@@ -130,40 +147,6 @@ function addReview(){
 		}
 	})
 }
-
-function addComment(id){
-	$.ajax({
-		url: '/add/comment/'+id+'/'+$("#"+id+"CmtBox").val(),
-		data: {},
-		method: 'POST',
-		success: (result)=>{
-			$("#"+id+"CmtBox").val("");
-			showComments(id);
-		}
-	})
-}
-
-// function deleteReview(){
-// 	$.ajax({
-// 		url: ,
-// 		data: {},
-// 		method: 'GET',
-// 		success: (result)=>{
-
-// 		}
-// 	})
-// }
-
-// function deleteComment(){
-// 	$.ajax({
-// 		url: ,
-// 		data: {},
-// 		method: 'GET',
-// 		success: (result)=>{
-
-// 		}
-// 	})
-// }
 
 function thumbsUpReview(id){
 	$.ajax({
