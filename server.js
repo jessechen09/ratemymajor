@@ -130,7 +130,7 @@ var harvard = new University({
 harvard.save((err)=>{if(err)console.log('error saving harvard')});
 
 var mit = new University({
-	university: 'Massachusetts Institue of Technology',
+	university: 'Massachusetts Institute of Technology',
 	reviews: [] 
 })
 mit.save((err)=>{if(err)console.log('error saving mit')});
@@ -242,7 +242,7 @@ var r2 = new Review({
 	review: generateString(253),
 	images: [],
 	thumbsUp: 33,
-	thumbsDown: 7,
+	thumbsDown: 5,
 	comments: [cmt1, cmt2],
 	major: "Basket Weaving",
 	university: "University of Arizona"
@@ -670,6 +670,7 @@ function makeHtml(rev,id){
 	html += "<input id="+id+"UpButton class='reviewButtons' type='button' onclick=thumbsUpReview('"+id+"'); value='Thumbs Up'/>"
 	html += "<span id="+id+"down>"+rev.thumbsDown+" </span>";
 	html += "<input id="+id+"DownButton class='reviewButtons' type='button' onclick=thumbsDownReview('"+id+"'); value='Thumbs Down'/>"
+	
 	if(rev.comments.length > 0){
 		html += "<input class='reviewButtons' id="+id+"CmtButton type='button' onclick=showComments('"+id+"'); value='Show comments'/>"
 	}
@@ -680,10 +681,6 @@ function makeHtml(rev,id){
 
 	html += "</div>" // close reviewFrame
 	return html;
-}
-
-function sort(){
-
 }
 
 function processSearch(results, sortOption){
@@ -726,7 +723,7 @@ function processSearch(results, sortOption){
 				// names must be equal
 				return 0;
 			})
-	} else if (sortOption == 'mostDisikes') {
+	} else if (sortOption == 'mostDislikes') {
 		results.sort((a,b)=>{
 			let nameA = a.thumbsDown;
 			let nameB = b.thumbsDown;
@@ -742,7 +739,6 @@ function processSearch(results, sortOption){
 	}
 
 	let html = "";
-
 	for(i=0; i<results.length; i++){
 		let rev = results[i];
 		let id = rev._id;

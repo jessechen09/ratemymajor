@@ -63,18 +63,12 @@ function searchUni(){
 	});
 } 
 
-var currentId = "";
-setInterval(()=>{
-	showComments(currentId)
-},1);
-
 function showComments(id){
 	$.ajax({  
 		url: '/show/comments/'+id,
 		data: {},
 		method: 'POST',
 		success: (result)=>{
-			currentId=id;
 			$("#"+id+"cmts").html(result);
 			$("#"+id+"CmtButton").attr("disabled",true);
 		}
