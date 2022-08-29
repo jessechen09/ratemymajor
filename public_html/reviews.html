@@ -9,6 +9,7 @@
   <script src="jquery.js"></script>
   <script src="code.js"></script>
   <title>Rate My Major</title>
+  <meta charset="utf-8">
 </head>
 <body>
 
@@ -21,7 +22,7 @@
   <h2>Add a Review</h2>
   <div id="createReview">
     <div id="major"></div>
-    <form action="/upload" method="post" enctype="multipart/form-data"></form>
+    <form action="/upload" method="post" enctype="multipart/form-data">
         <select name="chooseMaj" id="chooseMaj">
             <option value="static1">Choose a Major:</option>
             <option value="Accounting">Accounting</option>
@@ -51,13 +52,13 @@
         </select>
         <br/><br/>
         <label for="review">Review</label>
-        <input id="review" type="text"></input>
+        <input id="review" type="text">
         <br/><br/>
         <label for="rating">Rating out of 5.0</label>
         <input type="range" min="1" max="5" value="2.5" class="slider" id="rating">
         <br/><br/>
         <label for="image">Upload a photo</label>
-        <input id="image" type="text"></input>
+        <input id="image" type="text">
         <input class="btn mt-3" type="submit" value="Create Post" onClick='addReview();'>
     </form>
     <br/><br/>
